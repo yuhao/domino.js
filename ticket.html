@@ -1,0 +1,54 @@
+<script>
+  'use strict';
+
+  function EventLog (operator, operation, state) {
+    this.operator = operator;
+    this.operation = operation;
+    this.state = state;
+  }
+
+  var trace = [];
+
+  var handler = {
+    get: function(target, name){
+      console.log("get", name, typeof target[name]);
+      if ((typeof target[name] === "object") && (target[name] !== null)) {
+        if (!target[name].hasOwnProperty("_proxy")) {
+          return createProxy(target[name]);
+        } else {
+          return target[name]._proxy;
+        }
+      } else {
+        return target[name];
+      }
+    },
+  
+    set: function(target, name, val){
+      try {
+        target[name] = val;
+        console.log("set", name, typeof target[name]);
+      }
+      catch (e) {
+        console.log(e)
+      }
+      return true;
+    }
+  };
+  
+  function createProxy(node) {
+    console.log("create Proxy for", node.constructor.name);
+    var node_proxy = new Proxy(node, handler);
+    node._proxy = node_proxy;
+  
+    return node_proxy;
+  }
+  
+  document._getElementById = document.getElementById;
+
+  document.getElementById = function(id){
+    var el = document._getElementById(id);
+    var el_proxy = createProxy(el);
+    return el_proxy;
+  }
+
+</script>
