@@ -1,0 +1,52 @@
+<html>
+<head>
+  <link rel="import" href="/ticket.js/ticket.html">
+</head>
+<body>
+  <h1 id="test">Unittest</h1>
+  <div id="dashboard">
+  </div>
+</body>
+
+<script>
+  var unittest_suite = [];
+
+  function test(name, func) {
+    unittest_suite[name] = func;
+  }
+</script>
+
+<link rel="import" href="/ticket.js/unittest/getElementById_test.html">
+
+<script id="test_runner">
+  var dashboard = document.getElementById("dashboard");
+
+  var unittests = Object.keys(unittest_suite);
+
+  for (var i = 0; i < unittests.length; i++) {
+    var testId = unittests[i];
+    var tester = unittest_suite[testId];
+
+    var result = tester();
+
+    var div = document.createElement("div");
+    var link = document.createElement("a");
+    link.href = "#";
+    link.text = testId;
+    var span = document.createElement("span");
+    var text = document.createTextNode((result === true) ? ": Pass" : ": Fail"); 
+    span.style.fontWeight = "bold"
+    span.style.color = (result === true) ? "green" : "red";
+
+    // <div>
+    //   <a href="#">unittest Id</a> <span>pass|fail</span>
+    // </div>
+    div.appendChild(link);
+    div.appendChild(span);
+    span.appendChild(text);
+    dashboard.appendChild(div);
+  }
+</script>
+
+</html>
+
