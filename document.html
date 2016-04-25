@@ -1,0 +1,96 @@
+<script>
+  'use strict';
+
+  function findPropOwner(obj, prop) {
+    var currentObj = obj;
+    var owner = null;
+  
+    while (true) {
+      if (currentObj.hasOwnProperty(prop)) {
+        owner = currentObj;
+        break;
+      } else {
+        currentObj = currentObj.__proto__;
+        if (currentObj === null)
+          break;
+      }
+    }
+  
+    return owner;
+  }
+
+  function documentPropGetter(prop, ownerOfProp, originalGetter) {
+    return function() {
+      console.log("[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+      return originalGetter.apply(window.document);
+    };
+  }
+
+  function documentPropSetter(prop, ownerOfProp, originalSetter) {
+    return function(newValue) {
+      if (originalSetter === undefined) {
+        console.log("[Error] window.document." + prop + " does not have a setter");
+      } else {
+        console.log("[Setter] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+        return originalSetter.call(window.document, newValue);
+      }
+    };
+  }
+
+  function documentPropGetValue(prop, ownerOfProp) {
+    return function() {
+      console.log("[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+      return Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
+    };
+  }
+
+  function documentPropSetValue(prop, ownerOfProp, writable) {
+    return function(newValue) {
+      if (writable === false) {
+        console.log("[Error] window.document." + prop + " is not writable");
+      } else {
+        console.log("[Value] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+        ownerOfProp[prop] = newValue;
+      }
+    };
+  }
+
+  function instrumentDocumentProp() {
+    var ownerOfProp, getterOfProp, setterOfProp, valueOfProp, configOfProp, writableOfProp;
+
+    for (var prop in window.document) {
+      // By doing this, window.document.hasOwnProperty(prop) will be true
+      ownerOfProp = findPropOwner(window.document, prop);
+      getterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).get;
+      setterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).set;
+      valueOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
+      configOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).configurable;
+      writableOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).writable;
+
+      // Skip non-configurable properties because we won't be able to
+      // overwrite their getters. document.location and Node's
+      // capitalized properties are not configurable
+      if (configOfProp === true) {
+        if (getterOfProp !== undefined) {
+          // This property has an accessor descriptor
+          Object.defineProperty(window.document, prop, {
+            enumerable: true,
+            configurable: true,
+            get: documentPropGetter(prop, ownerOfProp, getterOfProp),
+            set: documentPropSetter(prop, ownerOfProp, setterOfProp)
+          });
+        } else {
+          // This property has a data descriptor. Now we are going to transform
+          // it to an accesstor descriptor to enable instrumentation. The value
+          // is still stored in the ownerOfProp.
+          Object.defineProperty(window.document, prop, {
+            enumerable: true,
+            configurable: true,
+            get: documentPropGetValue(prop, ownerOfProp),
+            set: documentPropSetValue(prop, ownerOfProp, writableOfProp),
+          });
+        }
+      }
+    }
+  }
+</script>

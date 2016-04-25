@@ -1,3 +1,4 @@
+<link rel="import" href="document.html">
 <script>
   'use strict';
 
@@ -90,9 +91,10 @@
   
     return func_proxy;
   }
-  
-  document._getElementById = document.getElementById;
 
+  instrumentDocumentProp();
+
+  document._getElementById = document.getElementById;
   document.getElementById = function(id){
     var el = document._getElementById(id);
     var el_proxy = createObjProxy(el);
