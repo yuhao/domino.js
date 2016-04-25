@@ -70,6 +70,7 @@
       // Skip non-configurable properties because we won't be able to
       // overwrite their getters. document.location and Node's
       // capitalized properties are not configurable
+      // TODO: Figure out how to instrument them.
       if (configOfProp === true) {
         if (getterOfProp !== undefined) {
           // This property has an accessor descriptor
