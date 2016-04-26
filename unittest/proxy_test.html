@@ -1,0 +1,49 @@
+<script type="text/javascript">
+'use strict';
+
+test('createObjProxy', function () {
+  var testObj = {
+    intVal: 2,
+    nestedObjProp: {
+      nestedProp: "testProp",
+      intVal: 6
+    },
+  }
+
+  var testObj_proxy = createObjProxy(testObj);
+  testObj.newIntVal = 4;
+
+  var cond1 = (testObj.intVal === testObj_proxy.intVal);
+  var cond2 = (testObj_proxy.newIntVal === 4);
+  var cond3 = (isOrHasProxy(testObj));
+  var cond4 = (!isOrHasProxy(testObj.nestedObjProp));
+
+  // This accesses testObj_proxy.nestedObjProp, and a proxy is created for it
+  var cond5 = (testObj_proxy.nestedObjProp.nestedProp === "testProp");
+  var cond6 = (isOrHasProxy(testObj.nestedObjProp));
+
+  return cond1 && cond2 && cond3 && cond4 && cond5 && cond6;
+});
+  
+test('createFuncProxy', function () {
+  var testFunc = function (a, b) {
+    return a + b;
+  }
+
+  var testFunc_proxy = createFuncProxy(testFunc);
+
+  // the |this| argument of testFunc_proxy is undefined
+  var cond1 = (testFunc_proxy(2, 3) === 5);
+
+  var testObj = {
+    func: testFunc
+  }
+
+  var testObj_proxy = createObjProxy(testObj);
+  var cond2 = (testObj_proxy.func(2, 3) === 5);
+
+  return cond1 && cond2;
+});
+  
+</script>
+

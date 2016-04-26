@@ -1,4 +1,6 @@
 <link rel="import" href="document.html">
+<link rel="import" href="proxy.html">
+
 <script>
   'use strict';
 
@@ -9,88 +11,6 @@
   }
 
   var trace = [];
-
-  var objHandler = {
-    get: function(target, name){
-      console.log("get", name, typeof target[name]);
-
-      if (target[name] === null) {
-        return null;
-      } else {
-        if (typeof target[name] === "object") {
-          if (!target[name].hasOwnProperty("_proxy")) {
-            return createObjProxy(target[name]);
-          } else {
-            // If we are accessing obj_proxy._src, we want obj,
-            // not obj_proxy._src._proxy which is obj_proxy itself!
-            if (name === "_src")
-              return target;
-            else
-              return target[name]._proxy;
-          }
-        } else if (typeof target[name] === "function") {
-          return createFuncProxy(target[name]);
-
-          // TODO: Figure out why binding to a proxy object is disallowed
-          // return target[name].bind(target._proxy);
-
-          // This will bind the function to the src node without creating a
-          // proxy for the function. It may create difficulties for
-          // instrumenting function calls later.
-          // return target[name].bind(target);
-
-          // This returns the function object itself, and when called later
-          // the |this| argument will be whoever calls it rather than |target|.
-          // Need to bind later.
-          // return target[name];
-        } else {
-          return target[name];
-        }
-      }
-    },
-  
-    set: function(target, name, val){
-      try {
-        target[name] = val;
-        console.log("set", name, typeof target[name]);
-      }
-      catch (e) {
-        // TODO: Placeholder for future exception handlings such as richer
-        // logging. For now, just throw the exception.
-        //console.log(e)
-        throw(e)
-      }
-      return true;
-    }
-  };
-
-  var funcHandler = {
-    apply: function(target, thisArg, argumentsList) {
-      // thisArg is a proxy. Before we figure out why binding to a proxy node
-      // is disallowed, we have to bind to the src of a proxy
-      return target.apply(thisArg._src, argumentsList);
-    }
-  };
-
-  function createObjProxy(node) {
-    console.log("create Proxy for", node.constructor.name);
-    var node_proxy = new Proxy(node, objHandler);
-    // Install cross-references between src and proxy
-    // Note that both the src and proxy will have both cross-references!
-    node._proxy = node_proxy;
-    node_proxy._src = node;
-  
-    return node_proxy;
-  }
-
-  function createFuncProxy(func) {
-    console.log("create Func Proxy for", func.name);
-    var func_proxy = new Proxy(func, funcHandler);
-    func._proxy = func_proxy;
-    func_proxy._src = func;
-  
-    return func_proxy;
-  }
 
   instrumentDocumentProp();
 
