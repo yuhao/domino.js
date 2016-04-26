@@ -24,15 +24,21 @@
     return function() {
       console.log("[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = originalGetter.apply(window.document);
-      if (value.hasOwnProperty("_proxy")) {
-        return value._proxy;
-      }
+      if (value === null)
+        return value
 
-      if (typeof value === "object") {
+      // Avoid creating a new proxy if it already exists.
+      // This actually might not matter if the V8 implementation of Proxy
+      // does not create a new proxy if it sees an obj already has a proxy
+      // and directly returns the created proxy.
+      if (value.hasOwnProperty("_proxy"))
+        return value._proxy;
+
+      if (typeof value === "object")
         return createObjProxy(value)
-      } else if (typeof value === "function") {
+      else if (typeof value === "function")
         return createFuncProxy(value)
-      }
+
       return value;
     };
   }
@@ -54,15 +60,17 @@
     return function() {
       console.log("[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
-      if (value.hasOwnProperty("_proxy")) {
-        return value._proxy;
-      }
+      if (value === null)
+        return value
 
-      if (typeof value === "object") {
+      if (value.hasOwnProperty("_proxy"))
+        return value._proxy;
+
+      if (typeof value === "object")
         return createObjProxy(value)
-      } else if (typeof value === "function") {
+      else if (typeof value === "function")
         return createFuncProxy(value)
-      }
+
       return value;
     };
   }

@@ -74,5 +74,33 @@ test('createNewPropAndSetValue', function () {
   delete document.testProp3;
 });
 
+test('getPropThatIsNull', function () {
+  // document.onreset is null, so the getter function should check it
+  var nonsense = document.onreset;
+});
+
+test('overwriteFunc', function () {
+  document.__proto__.__proto__.testProp1 = function() {return 1+4;}
+
+  instrumentOneDocumentProp("testProp1");
+
+  document._testProp1 = document.testProp1;
+
+  assert.isTrue(isOrHasProxy(document._testProp1));
+  assert.isTrue(isOrHasProxy(document.testProp1));
+
+  document.testProp1 = function () {return 5+6;}
+  assert.isFalse(isOrHasProxy(document.__proto__.__proto__.testProp1));
+  assert.isTrue(isOrHasProxy(document.testProp1));
+  assert.isTrue(isOrHasProxy(document.__proto__.__proto__.testProp1));
+
+  assert.equal(document._testProp1.call(document._testProp1), 5);
+  assert.equal(document.testProp1.call(document.testProp1), 11);
+
+  delete document.__proto__.__proto__.testProp1;
+  delete document.testProp1;
+  delete document._testProp1;
+});
+
 </script>
 
