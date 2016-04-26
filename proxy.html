@@ -16,10 +16,19 @@
           if (!target[name].hasOwnProperty("_proxy")) {
             return createObjProxy(target[name]);
           } else {
-            // If we are accessing obj_proxy._src, we want obj,
-            // not obj_proxy._src._proxy which is obj_proxy itself!
-            if (name === "_src")
+            if (name === "_src") {
+              // If we are accessing obj_proxy._src, we want obj,
+              // not obj_proxy._src._proxy which is obj_proxy itself!
               return target;
+            }
+            else if (name === "_proxy") {
+              // obj_proxy._proxy shouldn't return obj._proxy._proxy
+              // which is obj_proxy._proxy, and then we have an infinite loop!
+              // TODO: This shouldn't be allowed anyways because technically a
+              // proxy object shouldn't have a _proxy property!
+              // For now, just return obj._proxy to prevent the infinite loop.
+              return target[name];
+            }
             else
               return target[name]._proxy;
           }

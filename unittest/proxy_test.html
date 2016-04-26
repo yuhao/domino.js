@@ -13,16 +13,22 @@ test('createObjProxy', function () {
   var testObj_proxy = createObjProxy(testObj);
   testObj.newIntVal = 4;
 
-  var cond1 = (testObj.intVal === testObj_proxy.intVal);
-  var cond2 = (testObj_proxy.newIntVal === 4);
-  var cond3 = (isOrHasProxy(testObj));
-  var cond4 = (!isOrHasProxy(testObj.nestedObjProp));
+  // This should never happen in real code
+  assert.equal(testObj_proxy._proxy, testObj_proxy);
+  assert.equal(testObj._src, testObj);
+
+  // This is legal
+  assert.equal(testObj_proxy._src, testObj);
+  assert.equal(testObj._proxy, testObj_proxy);
+
+  assert.equal(testObj.intVal, testObj_proxy.intVal);
+  assert.equal(testObj_proxy.newIntVal, 4);
+  assert.isTrue(isOrHasProxy(testObj));
+  assert.isFalse(isOrHasProxy(testObj.nestedObjProp));
 
   // This accesses testObj_proxy.nestedObjProp, and a proxy is created for it
-  var cond5 = (testObj_proxy.nestedObjProp.nestedProp === "testProp");
-  var cond6 = (isOrHasProxy(testObj.nestedObjProp));
-
-  return cond1 && cond2 && cond3 && cond4 && cond5 && cond6;
+  assert.equal(testObj_proxy.nestedObjProp.nestedProp, "testProp");
+  assert.isTrue(isOrHasProxy(testObj.nestedObjProp));
 });
   
 test('createFuncProxy', function () {
@@ -33,16 +39,14 @@ test('createFuncProxy', function () {
   var testFunc_proxy = createFuncProxy(testFunc);
 
   // the |this| argument of testFunc_proxy is undefined
-  var cond1 = (testFunc_proxy(2, 3) === 5);
+  assert.equal(testFunc_proxy(2, 3), 5);
 
   var testObj = {
     func: testFunc
   }
 
   var testObj_proxy = createObjProxy(testObj);
-  var cond2 = (testObj_proxy.func(2, 3) === 5);
-
-  return cond1 && cond2;
+  assert.equal(testObj_proxy.func(2, 3), 5);
 });
   
 </script>
