@@ -55,43 +55,54 @@
     };
   }
 
-  function instrumentDocumentProp() {
+  function instrumentOneDocumentProp(prop) {
     var ownerOfProp, getterOfProp, setterOfProp, valueOfProp, configOfProp, writableOfProp;
 
-    for (var prop in window.document) {
-      // By doing this, window.document.hasOwnProperty(prop) will be true
-      ownerOfProp = findPropOwner(window.document, prop);
-      getterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).get;
-      setterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).set;
-      valueOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
-      configOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).configurable;
-      writableOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).writable;
+    // By doing this, window.document.hasOwnProperty(prop) will be true
+    ownerOfProp = findPropOwner(window.document, prop);
+    getterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).get;
+    setterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).set;
+    valueOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
+    configOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).configurable;
+    writableOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).writable;
 
-      // Skip non-configurable properties because we won't be able to
-      // overwrite their getters. document.location and Node's
-      // capitalized properties are not configurable
-      // TODO: Figure out how to instrument them.
-      if (configOfProp === true) {
-        if (getterOfProp !== undefined) {
-          // This property has an accessor descriptor
-          Object.defineProperty(window.document, prop, {
-            enumerable: true,
-            configurable: true,
-            get: documentPropGetter(prop, ownerOfProp, getterOfProp),
-            set: documentPropSetter(prop, ownerOfProp, setterOfProp)
-          });
-        } else {
-          // This property has a data descriptor. Now we are going to transform
-          // it to an accesstor descriptor to enable instrumentation. The value
-          // is still stored in the ownerOfProp.
-          Object.defineProperty(window.document, prop, {
-            enumerable: true,
-            configurable: true,
-            get: documentPropGetValue(prop, ownerOfProp),
-            set: documentPropSetValue(prop, ownerOfProp, writableOfProp),
-          });
-        }
+    // TODO: If ownerOfProp is document itself, this implementation leads to
+    // an infinite loop. For now, just return unconditionally without instrumentation.
+    // One workaround maybe to define the instrumented property in document.__proto__
+    if (ownerOfProp instanceof HTMLDocument)
+      return;
+
+    // Skip non-configurable properties because we won't be able to
+    // overwrite their getters. For now, seems like document.location and Node's
+    // capitalized properties are not configurable
+    // TODO: Figure out how to instrument them.
+    // TODO: Delete document.__proto__.prop doesn't delete document.prop
+    if (configOfProp === true) {
+      if (getterOfProp !== undefined) {
+        // This property has an accessor descriptor
+        Object.defineProperty(window.document, prop, {
+          enumerable: true,
+          configurable: true,
+          get: documentPropGetter(prop, ownerOfProp, getterOfProp),
+          set: documentPropSetter(prop, ownerOfProp, setterOfProp)
+        });
+      } else {
+        // This property has a data descriptor. Now we are going to transform
+        // it to an accesstor descriptor to enable instrumentation. The value
+        // is still stored in the ownerOfProp.
+        Object.defineProperty(window.document, prop, {
+          enumerable: true,
+          configurable: true,
+          get: documentPropGetValue(prop, ownerOfProp),
+          set: documentPropSetValue(prop, ownerOfProp, writableOfProp),
+        });
       }
+    }
+  }
+
+  function instrumentDocumentProp() {
+    for (var prop in window.document) {
+      instrumentOneDocumentProp(prop);
     }
   }
 </script>
