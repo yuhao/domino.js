@@ -19,13 +19,25 @@
     return owner;
   }
 
+  // Getter for properties which have an accessor descriptor
   function documentPropGetter(prop, ownerOfProp, originalGetter) {
     return function() {
       console.log("[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
-      return originalGetter.apply(window.document);
+      var value = originalGetter.apply(window.document);
+      if (value.hasOwnProperty("_proxy")) {
+        return value._proxy;
+      }
+
+      if (typeof value === "object") {
+        return createObjProxy(value)
+      } else if (typeof value === "function") {
+        return createFuncProxy(value)
+      }
+      return value;
     };
   }
 
+  // Setter for properties which have an accessor descriptor
   function documentPropSetter(prop, ownerOfProp, originalSetter) {
     return function(newValue) {
       if (originalSetter === undefined) {
@@ -37,13 +49,25 @@
     };
   }
 
+  // Getter for properties which have a data descriptor
   function documentPropGetValue(prop, ownerOfProp) {
     return function() {
       console.log("[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
-      return Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
+      var value = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
+      if (value.hasOwnProperty("_proxy")) {
+        return value._proxy;
+      }
+
+      if (typeof value === "object") {
+        return createObjProxy(value)
+      } else if (typeof value === "function") {
+        return createFuncProxy(value)
+      }
+      return value;
     };
   }
 
+  // Setter for properties which have a data descriptor
   function documentPropSetValue(prop, ownerOfProp, writable) {
     return function(newValue) {
       if (writable === false) {

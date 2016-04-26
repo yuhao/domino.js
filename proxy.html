@@ -7,7 +7,7 @@
 
   var objHandler = {
     get: function(target, name){
-      console.log("get", name, typeof target[name]);
+      console.log("[Proxy] Read", name, typeof target[name]);
 
       if (target[name] === null) {
         return null;
@@ -29,24 +29,29 @@
               // For now, just return obj._proxy to prevent the infinite loop.
               return target[name];
             }
-            else
+            else {
               return target[name]._proxy;
+            }
           }
         } else if (typeof target[name] === "function") {
-          return createFuncProxy(target[name]);
+          if (!target[name].hasOwnProperty("_proxy")) {
+            return createFuncProxy(target[name]);
 
-          // TODO: Figure out why binding to a proxy object is disallowed
-          // return target[name].bind(target._proxy);
+            // TODO: Figure out why binding to a proxy object is disallowed
+            // return target[name].bind(target._proxy);
 
-          // This will bind the function to the src node without creating a
-          // proxy for the function. It may create difficulties for
-          // instrumenting function calls later.
-          // return target[name].bind(target);
+            // This will bind the function to the src node without creating a
+            // proxy for the function. It may create difficulties for
+            // instrumenting function calls later.
+            // return target[name].bind(target);
 
-          // This returns the function object itself, and when called later
-          // the |this| argument will be whoever calls it rather than |target|.
-          // Need to bind later.
-          // return target[name];
+            // This returns the function object itself, and when called later
+            // the |this| argument will be whoever calls it rather than |target|
+            // Need to bind later.
+            // return target[name];
+          } else {
+            return target[name]._proxy;
+          }
         } else {
           return target[name];
         }
@@ -56,7 +61,7 @@
     set: function(target, name, val){
       try {
         target[name] = val;
-        console.log("set", name, typeof target[name]);
+        console.log("[Proxy] Write", name, typeof target[name]);
       }
       catch (e) {
         // TODO: Placeholder for future exception handlings such as richer
@@ -70,17 +75,22 @@
 
   var funcHandler = {
     apply: function(target, thisArg, argumentsList) {
-      // the proxied function could be called with |this| (thisArg here) as undefined,
-      // or if it's called from an proxied object, |thisArg| will be a proxy.
-      if (thisArg === undefined)
+      if (thisArg === undefined) {
+        // when the proxied function is called with |this| (thisArg) undefined
         return target.apply(thisArg, argumentsList);
-      else
+      } else if (thisArg === window.document) {
+        // when called from document (e.g., document.getElementById), document
+        // doesn't have a proxy
+        return target.apply(thisArg, argumentsList);
+      } else {
+        // or if it's called from an proxied object, |thisArg| will be a proxy
         return target.apply(thisArg._src, argumentsList);
+      }
     }
   };
 
   function createObjProxy(node) {
-    console.log("create Proxy for", node.constructor.name);
+    console.log("[Proxy] create Proxy for", node.constructor.name);
     var node_proxy = new Proxy(node, objHandler);
     // Install cross-references between src and proxy
     // Note that both the src and proxy will have both cross-references!
@@ -91,7 +101,7 @@
   }
 
   function createFuncProxy(func) {
-    console.log("create Func Proxy for", func.name);
+    console.log("[Proxy] create Func Proxy for", func.name);
     var func_proxy = new Proxy(func, funcHandler);
     func._proxy = func_proxy;
     func_proxy._src = func;
