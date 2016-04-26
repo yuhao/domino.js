@@ -1,7 +1,7 @@
 <script type="text/javascript">
 'use strict';
   
-test('setAttributeDirectly', function () {
+test('setAndGetAttributeDirectly', function () {
   var el = document.getElementById("test");
 
   el.style.color = "blue";
@@ -12,7 +12,7 @@ test('setAttributeDirectly', function () {
   return (cond1 && cond2);
 });
 
-test('setAttribute', function () {
+test('setAndGetAttributeInDOMAPI', function () {
   var el = document.getElementById("test");
 
   el.setAttribute("class", "democlass");
@@ -28,6 +28,17 @@ test('setAttribute', function () {
       }
     }
   }
+
+  return (cond1 && cond2);
+});
+
+test('setAndGetAttributeInjQuery', function () {
+  var el = $("#test")
+
+  el.css("color", "blue");
+  var cond1 = (el.css("color") === "blue")
+  el.css("color", "red");
+  var cond2 = (el.css("color") === "red")
 
   return (cond1 && cond2);
 });
