@@ -2,6 +2,7 @@
 <head>
   <link rel="import" href="/ticket.js/ticket.html">
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <body>
   <h1 id="test">Unittest</h1>
   <div id="dashboard">
@@ -17,26 +18,38 @@
 </script>
 
 <link rel="import" href="/ticket.js/unittest/getElementById_test.html">
+<link rel="import" href="/ticket.js/unittest/document_test.html">
 
 <script id="test_runner">
-  var dashboard = document.getElementById("dashboard");
-
+  var start, end, duration, result;
   var unittests = Object.keys(unittest_suite);
+  var dashboard = document.getElementById("dashboard");
+  var div, link, span, text;
 
   for (var i = 0; i < unittests.length; i++) {
-    var testId = unittests[i];
-    var tester = unittest_suite[testId];
+    var testName= unittests[i];
+    var currentTest = unittest_suite[testName];
 
-    var result = tester();
+    start = new Date();
+    try {
+      result = currentTest();
+    }
+    catch (e) {
+      result = false;
+    }
+    end = new Date();
+    duration = end - start;
 
-    var div = document.createElement("div");
-    var link = document.createElement("a");
-    link.href = "#";
-    link.text = testId;
-    var span = document.createElement("span");
-    var text = document.createTextNode((result === true) ? ": Pass" : ": Fail"); 
+    div = document.createElement("div");
+    link = document.createElement("a");
+    link.href = "javascript:void(0);";
+    link.text = testName;
+    link.onclick = currentTest;
+
+    span = document.createElement("span");
+    text = document.createTextNode((result === true) ? " Passed" + " (" + duration.toString() + " ms)" : " Failed" + " (" + duration.toString() + " ms)"); 
     span.style.fontWeight = "bold"
-    span.style.color = (result === true) ? "green" : "red";
+    span.style.color = (result === true) ? "darkgreen" : "red";
 
     // <div>
     //   <a href="#">unittest Id</a> <span>pass|fail</span>

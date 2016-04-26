@@ -1,0 +1,86 @@
+<script type="text/javascript">
+'use strict';
+
+test('findPropOwner', function () {
+  document.__proto__.testProp1 = "testProp1";
+  document.__proto__.__proto__.testProp2 = "testProp2";
+  Object.defineProperty(window.document, "testProp3", {
+    enumerable: true,
+    configurable: true,
+    value: "testProp3",
+    writable: false
+  });
+
+  var cond1 = (findPropOwner(window.document, "testProp1").constructor.name === "HTMLDocument") &&
+    (findPropOwner(window.document, "testProp1") instanceof Document);
+  var cond2 = (findPropOwner(window.document, "testProp2").constructor.name === "Document") &&
+    (findPropOwner(window.document, "testProp2") instanceof Node);
+  var cond3 = (findPropOwner(window.document, "testProp3").constructor.name === "HTMLDocument") &&
+    (findPropOwner(window.document, "testProp3") instanceof HTMLDocument);
+
+  delete document.__proto__.testProp1;
+  delete document.__proto__.__proto__.testProp2;
+  delete document.testProp1;
+  delete document.testProp2;
+  delete document.testProp3;
+
+  return cond1 && cond2 && cond3;
+});
+  
+test('setExistingPropertyWithASetter', function () {
+  // This set should succeed
+  // document.title has an accessor descriptor
+  var oldTitle = document.title;
+
+  document.title = "newTitle";
+  var cond1 = (document.title === "newTitle");
+
+  document.title = oldTitle;
+
+  return cond1;
+});
+
+test('setExistingPropertyWithoutASetter', function () {
+  // This set should fail
+  // document.charset has an accessor descriptor
+  var oldCharset = document.charset;
+
+  document.charset = "newCharset";
+  var cond1 = (document.charset === oldCharset);
+
+  return cond1;
+});
+
+test('createNewPropAndSetValue', function () {
+  // Define new properties in document.__proto__
+  document.__proto__.testProp1 = {intVal: 2, stringVal: "test"};
+  document.__proto__.__proto__.testProp2 = "newProp";
+  document.testProp3 = function() {return 1+4;}
+
+  instrumentOneDocumentProp("testProp1");
+  instrumentOneDocumentProp("testProp2");
+  instrumentOneDocumentProp("testProp3");
+
+  document.testProp1.intval = 4;
+  document.testProp1.stringVal = "newTest";
+  document.testProp2 = "newTest";
+
+  var cond1 = (document.testProp1.stringVal === document.testProp2);
+
+  document.testProp1 = {testFunc: function (){return 2+3;}, stringVal: "test"};
+  var cond2 = (document.testProp1.testFunc() === 5)
+
+  var cond3 = (document.testProp1.testFunc() === document.testProp3())
+
+  // Delete new properties to not interfere with later tests
+  delete document.__proto__.testProp1;
+  delete document.__proto__.__proto__.testProp2;
+  delete document.testProp1;
+  delete document.testProp2;
+  delete document.testProp3;
+
+  return cond1 && cond2 && cond3;
+});
+
+</script>
+
