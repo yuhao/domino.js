@@ -5,42 +5,38 @@ test('setAndGetAttributeDirectly', function () {
   var el = document.getElementById("test");
 
   el.style.color = "blue";
-  var cond1 = (el.style.color === "blue")
+  assert.equal(el.style.color, "blue")
   el.style.color = "red";
-  var cond2 = (el.style.color === "red")
-
-  return (cond1 && cond2);
+  assert.equal(el.style.color, "red")
 });
 
 test('setAndGetAttributeInDOMAPI', function () {
   var el = document.getElementById("test");
 
   el.setAttribute("class", "democlass");
-  var cond1 = (el.getAttribute("class") === "democlass");
+  assert.equal(el.getAttribute("class"), "democlass");
 
-  var cond2 = false;
+  var cond = false;
   var attribute_len = el.attributes.length;
   for (var i = 0; i < attribute_len; i++) {
     if (el.attributes[i.toString()].nodeName === "class") {
       if (el.attributes[i].nodeValue === "democlass") {
-        cond2 = true;
+        cond = true;
         break;
       }
     }
   }
 
-  return (cond1 && cond2);
+  assert.isTrue(cond)
 });
 
 test('setAndGetAttributeInjQuery', function () {
   var el = $("#test")
 
   el.css("color", "blue");
-  var cond1 = (el.css("color") === "blue")
+  assert.equal(el.css("color"), "blue")
   el.css("color", "red");
-  var cond2 = (el.css("color") === "red")
-
-  return (cond1 && cond2);
+  assert.equal(el.css("color"), "red")
 });
 </script>
 
