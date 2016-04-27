@@ -14,8 +14,7 @@
       } else {
         if (typeof target[name] === "object") {
           if (!target[name].hasOwnProperty("_proxy")) {
-            return createObjProxy(target[name]);
-          } else {
+            return createObjProxy(target[name]); } else {
             if (name === "_src") {
               // If we are accessing obj_proxy._src, we want obj,
               // not obj_proxy._src._proxy which is obj_proxy itself!
@@ -75,6 +74,13 @@
 
   var funcHandler = {
     apply: function(target, thisArg, argumentsList) {
+      // Change the proxy argument to its _src
+      var numArgs = argumentsList.length;
+      for (var i = 0;i < numArgs;i++) {
+        if (typeof argumentsList[i] === "object" && isOrHasProxy(argumentsList[i]))
+          argumentsList[i] = argumentsList[i]._src;
+      }
+
       if (thisArg === undefined) {
         // when the proxied function is called with |this| (thisArg) undefined
         return target.apply(thisArg, argumentsList);
