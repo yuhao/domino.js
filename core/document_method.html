@@ -1,0 +1,28 @@
+<script>
+  'use strict';
+
+  //var methods = ["clear", "captureEvents", "releaseEvents", "getElementsByTagName", "getElementsByTagNameNS", "getElementsByClassName", "createDocumentFragment", "createTextNode", "createComment", "createProcessingInstruction", "importNode", "adoptNode", "createAttribute", "createAttributeNS", "createEvent", "createRange", "createNodeIterator", "createTreeWalker", "createCDATASection", "getElementsByName", "open", "close", "write", "writeln", "hasFocus", "execCommand", "queryCommandEnabled", "queryCommandIndeterm", "queryCommandState", "queryCommandSupported", "queryCommandValue", "elementFromPoint", "elementsFromPoint", "getSelection", "exitPointerLock", "registerElement", "createElement", "createElementNS", "caretRangeFromPoint", "webkitCancelFullScreen", "webkitExitFullscreen", "getElementById", "querySelector", "querySelectorAll", "createExpression", "createNSResolver", "evaluate", "hasChildNodes", "normalize", "cloneNode", "isEqualNode", "compareDocumentPosition", "contains", "lookupPrefix", "lookupNamespaceURI", "isDefaultNamespace", "insertBefore", "appendChild", "replaceChild", "removeChild", "isSameNode", "addEventListener", "removeEventListener", "dispatchEvent"];
+  var methodsThatReturnAnElement = [document.getElementById, document.createElement];
+
+  function generateWrapperMethod(shadowMethodName) {
+    // Trick: Return a new method that takes no argument, but that will call the
+    // original method with the correct arguments when the new method is called.
+    return function() {
+      var el = document[shadowMethodName].apply(document, arguments);
+      var el_proxy = createObjProxy(el);
+      return el_proxy;
+    }
+  }
+
+  function overwriteDocumentMethod() {
+    for(var i = 0;i < methodsThatReturnAnElement.length;i++) {
+      var method = methodsThatReturnAnElement[i];
+      var methodName = method.name;
+      var shadowMethodName = "_" + methodName;
+
+      document[shadowMethodName] = method;
+      document[methodName] = generateWrapperMethod(shadowMethodName);
+    }
+  }
+
+</script>

@@ -1,4 +1,5 @@
 <link rel="import" href="document.html">
+<link rel="import" href="document_method.html">
 <link rel="import" href="proxy.html">
 
 <script>
@@ -14,10 +15,7 @@
 
   instrumentDocumentProp();
 
-  document._getElementById = document.getElementById;
-  document.getElementById = function(id){
-    var el = document._getElementById(id);
-    var el_proxy = createObjProxy(el);
-    return el_proxy;
-  }
+  // Overwrite methods (function properties) of window.document
+  // such that they return proxied objects.
+  overwriteDocumentMethod();
 </script>
