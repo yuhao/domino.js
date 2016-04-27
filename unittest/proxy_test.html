@@ -49,5 +49,29 @@ test('createFuncProxy', function () {
   assert.equal(testObj_proxy.func(2, 3), 5);
 });
   
+test('convertFuncArgBackToObj', function () {
+  function a() {
+    this.x = 2;
+  }
+  a.prototype = HTMLElement.prototype;
+
+  var b = new a();
+  b.x = 4;
+
+  var testObj = {
+    func: function (b) {
+      assert.equal(b.constructor.name, "HTMLElement");
+      // If b wasn't converted to the source obj (that is b is a proxy)
+      // b would be equal to b._proxy.
+      assert.notEqual(b, b._proxy);
+      return b.x;
+    }
+  }
+
+  var testObj_proxy = createObjProxy(testObj);
+  var b_proxy = createObjProxy(b);
+  assert.equal(testObj_proxy.func(b_proxy), 4);
+});
+  
 </script>
 
