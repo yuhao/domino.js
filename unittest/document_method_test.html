@@ -1,17 +1,14 @@
 <script type="text/javascript">
 'use strict';
   
-test('setAndGetAttributeDirectly', function () {
+// getElementById
+test('getElementById', function () {
   var el = document.getElementById("test");
 
   el.style.color = "blue";
   assert.equal(el.style.color, "blue")
   el.style.color = "red";
   assert.equal(el.style.color, "red")
-});
-
-test('setAndGetAttributeInDOMAPI', function () {
-  var el = document.getElementById("test");
 
   el.setAttribute("class", "democlass");
   assert.equal(el.getAttribute("class"), "democlass");
@@ -30,13 +27,24 @@ test('setAndGetAttributeInDOMAPI', function () {
   assert.isTrue(cond)
 });
 
-test('setAndGetAttributeInjQuery', function () {
-  var el = $("#test")
+// createElement
+test('createElement', function () {
+  var el = document.getElementById("test");
 
-  el.css("color", "blue");
-  assert.equal(el.css("color"), "blue")
-  el.css("color", "red");
-  assert.equal(el.css("color"), "red")
+  var newDiv = document.createElement("div"); 
+  document.body.insertBefore(newDiv, el);
+
+  assert.equal(newDiv.parentElement, document.body);
+  assert.equal(newDiv.nextElementSibling, el);
+});
+
+// createTextNode
+test('createTextNode', function () {
+  var newDiv = document.createElement("div"); 
+  var newContent = document.createTextNode("new node"); 
+  newDiv.appendChild(newContent);
+
+  assert.equal(newContent.parentElement, newDiv);
 });
 </script>
 
