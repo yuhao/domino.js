@@ -1,10 +1,79 @@
 <script>
   'use strict';
 
-  //var methods = ["clear", "captureEvents", "releaseEvents", "getElementsByTagName", "getElementsByTagNameNS", "getElementsByClassName", "createDocumentFragment", "createTextNode", "createComment", "createProcessingInstruction", "importNode", "adoptNode", "createAttribute", "createAttributeNS", "createEvent", "createRange", "createNodeIterator", "createTreeWalker", "createCDATASection", "getElementsByName", "open", "close", "write", "writeln", "hasFocus", "execCommand", "queryCommandEnabled", "queryCommandIndeterm", "queryCommandState", "queryCommandSupported", "queryCommandValue", "elementFromPoint", "elementsFromPoint", "getSelection", "exitPointerLock", "registerElement", "createElement", "createElementNS", "caretRangeFromPoint", "webkitCancelFullScreen", "webkitExitFullscreen", "getElementById", "querySelector", "querySelectorAll", "createExpression", "createNSResolver", "evaluate", "hasChildNodes", "normalize", "cloneNode", "isEqualNode", "compareDocumentPosition", "contains", "lookupPrefix", "lookupNamespaceURI", "isDefaultNamespace", "insertBefore", "appendChild", "replaceChild", "removeChild", "isSameNode", "addEventListener", "removeEventListener", "dispatchEvent"];
-  var methodsThatReturnAnElement = [document.getElementById,
-                                    document.createElement,
-                                    document.createTextNode];
+  // Do not wrap. Seems like all of these are deprecated anyways.
+  var methodsThatAreOwnedByHTMLDocument = [document.clear,
+                                           document.captureEvents,
+                                           document.releaseEvents];
+
+  // This is a set of methods that we primarily want to wrap.
+  var methodsThatAreOwnedByDocument = [document.getElementsByTagName,
+                                       document.getElementsByTagNameNS,
+                                       document.getElementsByClassName,
+                                       document.getElementById,
+                                       document.getElementsByName,
+                                       document.getSelection,
+                                       document.createDocumentFragment,
+                                       document.createTextNode,
+                                       document.createComment,
+                                       document.createProcessingInstruction,
+                                       document.createAttribute,
+                                       document.createAttributeNS,
+                                       document.createEvent,
+                                       document.createRange,
+                                       document.createNodeIterator,
+                                       document.createTreeWalker,
+                                       document.createCDATASection,
+                                       document.createElement,
+                                       document.createElementNS,
+                                       document.createExpression,
+                                       document.createNSResolver, // Methods above (inclusive) return an object.
+                                       document.importNode,
+                                       document.adoptNode,
+                                       document.open,
+                                       document.close,
+                                       document.write,
+                                       document.writeln,
+                                       document.hasFocus,
+                                       document.execCommand,
+                                       document.queryCommandEnabled,
+                                       document.queryCommandIndeterm,
+                                       document.queryCommandState,
+                                       document.queryCommandSupported,
+                                       document.queryCommandValue,
+                                       document.elementFromPoint,
+                                       document.elementsFromPoint,
+                                       document.exitPointerLock,
+                                       document.registerElement,
+                                       document.caretRangeFromPoint,
+                                       document.webkitCancelFullScreen,
+                                       document.webkitExitFullscreen,
+                                       document.querySelector,
+                                       document.querySelectorAll,
+                                       document.evaluate];
+
+  // Do not wrap as they will also be called from Element.
+  // Five methods return an object.
+  var methodsThatAreOwnedByNode = [document.hasChildNodes,
+                                   document.normalize,
+                                   document.cloneNode, // Obj
+                                   document.isEqualNode,
+                                   document.compareDocumentPosition,
+                                   document.contains,
+                                   document.lookupPrefix,
+                                   document.lookupNamespaceURI,
+                                   document.isDefaultNamespace,
+                                   document.insertBefore, // Obj
+                                   document.appendChild, // Obj
+                                   document.replaceChild, // Obj
+                                   document.removeChild, // Obj
+                                   document.isSameNode]
+
+  // Do not wrap as they will also be called from Element.
+  // None returns an object.
+  var methodsThatAreOwnedByEventTarget = [document.addEventListener,
+                                          document.removeEventListener,
+                                          document.dispatchEvent];
 
   function generateWrapperMethod(shadowMethodName) {
     // Trick: Return a new method that takes no argument, but that will call the
@@ -17,8 +86,8 @@
   }
 
   function overwriteDocumentMethod() {
-    for(var i = 0;i < methodsThatReturnAnElement.length;i++) {
-      var method = methodsThatReturnAnElement[i];
+    for(var i = 0;i < methodsThatAreOwnedByDocument.length;i++) {
+      var method = methodsThatAreOwnedByDocument[i];
       var methodName = method.name;
       var shadowMethodName = "_" + methodName;
 

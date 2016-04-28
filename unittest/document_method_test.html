@@ -1,7 +1,6 @@
 <script type="text/javascript">
 'use strict';
   
-// getElementById
 test('getElementById', function () {
   var el = document.getElementById("test");
 
@@ -27,7 +26,49 @@ test('getElementById', function () {
   assert.isTrue(cond)
 });
 
-// createElement
+test('getElementsByTagName', function () {
+  var before = document.getElementsByTagName("div").length;
+  var newDiv = document.createElement("div"); 
+  document.body.appendChild(newDiv);
+  var after = document.getElementsByTagName("div").length;
+
+  assert.equal(after - before, 1);
+});
+
+test('getElementsByTagNameNS', function () {
+  var all = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "*");
+  var divs = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "div");
+  var body = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body");
+
+  assert.equal(body.length, 1)
+  assert.isTrue(all.length > divs.length)
+});
+
+test('getElementsByClassName', function () {
+  var el = document.getElementById("test");
+  el.setAttribute("class", "democlass");
+  var elClass = document.getElementsByClassName("democlass");
+
+  assert.equal(elClass.length, 1);
+  assert.equal(elClass[0], el);
+});
+
+test('getElementsByName', function () {
+  var el = document.getElementById("test");
+
+  var before = document.getElementsByName("testname").length;
+  var newInput = document.createElement("input"); 
+  newInput.name = "testname";
+  document.body.insertBefore(newInput, el);
+
+  var after = document.getElementsByName("testname").length;
+
+  assert.equal(before, 0);
+  assert.equal(after, 1);
+
+  document.body.removeChild(newInput);
+});
+
 test('createElement', function () {
   var el = document.getElementById("test");
 
@@ -36,15 +77,134 @@ test('createElement', function () {
 
   assert.equal(newDiv.parentElement, document.body);
   assert.equal(newDiv.nextElementSibling, el);
+  assert.equal(newDiv.nodeType, Node.ELEMENT_NODE);
 });
 
-// createTextNode
+test('createElementNS', function () {
+  var before = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "div").length;
+  var newDiv = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+  document.body.appendChild(newDiv);
+  var after = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "div").length;
+
+  assert.equal(after - before, 1);
+});
+
 test('createTextNode', function () {
   var newDiv = document.createElement("div"); 
   var newContent = document.createTextNode("new node"); 
   newDiv.appendChild(newContent);
 
   assert.equal(newContent.parentElement, newDiv);
+  assert.equal(newContent.nodeType, Node.TEXT_NODE);
 });
+
+test('createDocumentFragment', function () {
+  var ul = document.createElement("ul"); 
+  var docfrag = document.createDocumentFragment();
+  var browserList = ["Internet Explorer", "Mozilla Firefox", "Safari", "Chrome", "Opera"];
+
+  browserList.forEach(function(e) {
+    var li = document.createElement("li");
+    li.textContent = e;
+    docfrag.appendChild(li);
+  });
+  ul.appendChild(docfrag);
+  var allLIs = ul.getElementsByTagName("li");
+
+  assert.equal(allLIs.length, 5);
+  assert.equal(docfrag.nodeType, Node.DOCUMENT_FRAGMENT_NODE);
+});
+
+test('createComment', function () {
+  var el = document.getElementById("test");
+  var comment = document.createComment("Some comments");
+  el.appendChild(comment);
+
+  assert.equal(comment.nodeType, Node.COMMENT_NODE);
+  assert.equal(el.childNodes[el.childNodes.length - 1], comment);
+});
+
+test('createProcessingInstruction', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createProcessingInstruction
+});
+
+test('createAttribute', function () {
+  var el = document.getElementById("test");
+  var attr = document.createAttribute("testAttr");
+  attr.value = "testtset";
+  el.setAttributeNode(attr);
+
+  assert.equal(el.getAttribute("testAttr"), "testtset");
+});
+
+test('createAttributeNS', function () {
+  // Not tested
+});
+
+test('createEvent', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
+});
+
+test('createRange', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange
+});
+
+test('createNodeIterator', function () {
+  var nodeIterator = document.createNodeIterator(
+    document.body,
+    NodeFilter.SHOW_ELEMENT,
+    function(node) {
+      return node.nodeName.toLowerCase() === 'div' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  );
+
+  var pars = [];
+  var currentNode;
+  while (currentNode = nodeIterator.nextNode()) {
+    pars.push(currentNode);
+  }
+
+  assert.equal(document.getElementsByTagName("div").length, pars.length);
+});
+
+test('createTreeWalker', function () {
+  var treeWalker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_ELEMENT,
+    function(node) {
+      return node.nodeName.toLowerCase() === 'div' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+  );
+
+  var nodeList = [];
+  while(treeWalker.nextNode())
+    nodeList.push(treeWalker.currentNode);
+
+  assert.equal(document.getElementsByTagName("div").length, nodeList.length);
+});
+
+test('createCDATASection', function () {
+  // Not tested. CDATASection has been removed from the Web standards.
+  // https://developer.mozilla.org/en-US/docs/Web/API/CDATASection
+});
+
+test('createExpression', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createExpression
+});
+
+test('createNSResolver', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createNSResolver
+});
+
+test('getSelection', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/getSelection
+});
+
 </script>
 
