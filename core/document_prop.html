@@ -19,7 +19,8 @@
     return owner;
   }
 
-  // Getter for properties which have an accessor descriptor
+  // Getter for properties which have an accessor descriptor.
+  // Always try to return a proxy object if the property is an object.
   function documentPropGetter(prop, ownerOfProp, originalGetter) {
     return function() {
       console.log("[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
@@ -55,7 +56,8 @@
     };
   }
 
-  // Getter for properties which have a data descriptor
+  // Getter for properties which have a data descriptor.
+  // Always try to return a proxy object if the property is an object.
   function documentPropGetValue(prop, ownerOfProp) {
     return function() {
       console.log("[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
@@ -90,7 +92,8 @@
   function instrumentOneDocumentProp(prop) {
     var ownerOfProp, getterOfProp, setterOfProp, valueOfProp, configOfProp, writableOfProp;
 
-    // By doing this, window.document.hasOwnProperty(prop) will be true
+    // Be careful, by doing this, document.hasOwnProperty(prop) will be true,
+    // and calling findPropOwner will not return the original owner.
     ownerOfProp = findPropOwner(window.document, prop);
     getterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).get;
     setterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).set;
