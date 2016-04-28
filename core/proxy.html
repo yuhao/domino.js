@@ -14,7 +14,8 @@
       } else {
         if (typeof target[name] === "object") {
           if (!target[name].hasOwnProperty("_proxy")) {
-            return createObjProxy(target[name]); } else {
+            return createObjProxy(target[name]);
+          } else {
             if (name === "_src") {
               // If we are accessing obj_proxy._src, we want obj,
               // not obj_proxy._src._proxy which is obj_proxy itself!
@@ -95,7 +96,11 @@
     }
   };
 
+  // TODO: maybe we want to consolidate obj and func proxy creation?
   function createObjProxy(node) {
+    if (typeof node !== "object")
+      return node;
+
     console.log("[Proxy] create Proxy for", node.constructor.name);
     var node_proxy = new Proxy(node, objHandler);
     // Install cross-references between src and proxy

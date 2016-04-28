@@ -73,5 +73,12 @@ test('convertFuncArgBackToObj', function () {
   assert.equal(testObj_proxy.func(b_proxy), 4);
 });
   
+test('createObjProxyFromNonObj', function () {
+  var testInt = 2;
+  var testInt_proxy = createObjProxy(testInt);
+
+  assert.isFalse(isOrHasProxy(testInt_proxy));
+});
+
 </script>
 
