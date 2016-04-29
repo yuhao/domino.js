@@ -13,44 +13,26 @@
         return null;
       } else {
         if (typeof target[name] === "object") {
-          if (!target[name].hasOwnProperty("_proxy")) {
-            return createObjProxy(target[name]);
+          if (name === "_src") {
+            // If we are accessing obj_proxy._src, we want obj,
+            // not obj_proxy._src._proxy which is obj_proxy itself!
+            return target;
+          }
+          else if (name === "_proxy") {
+            // obj_proxy._proxy shouldn't return obj._proxy._proxy
+            // which is obj_proxy._proxy, and then we have an infinite loop!
+            // TODO: This shouldn't be allowed anyways because technically a
+            // proxy object shouldn't have a _proxy property!
+            // For now, just return obj._proxy to prevent the infinite loop.
+            return target[name];
           } else {
-            if (name === "_src") {
-              // If we are accessing obj_proxy._src, we want obj,
-              // not obj_proxy._src._proxy which is obj_proxy itself!
-              return target;
-            }
-            else if (name === "_proxy") {
-              // obj_proxy._proxy shouldn't return obj._proxy._proxy
-              // which is obj_proxy._proxy, and then we have an infinite loop!
-              // TODO: This shouldn't be allowed anyways because technically a
-              // proxy object shouldn't have a _proxy property!
-              // For now, just return obj._proxy to prevent the infinite loop.
-              return target[name];
-            }
-            else {
-              return target[name]._proxy;
-            }
+            return createObjProxy(target[name]);
           }
         } else if (typeof target[name] === "function") {
-          if (!target[name].hasOwnProperty("_proxy")) {
-            return createFuncProxy(target[name]);
-
-            // TODO: Figure out why binding to a proxy object is disallowed
-            // return target[name].bind(target._proxy);
-
-            // This will bind the function to the src node without creating a
-            // proxy for the function. It may create difficulties for
-            // instrumenting function calls later.
-            // return target[name].bind(target);
-
-            // This returns the function object itself, and when called later
-            // the |this| argument will be whoever calls it rather than |target|
-            // Need to bind later.
-            // return target[name];
+          if (name === "hasOwnProperty") {
+            return target[name];
           } else {
-            return target[name]._proxy;
+            return createFuncProxy(target[name]);
           }
         } else {
           return target[name];
@@ -82,24 +64,36 @@
           argumentsList[i] = argumentsList[i]._src;
       }
 
-      if (thisArg === undefined) {
-        // when the proxied function is called with |this| (thisArg) undefined
-        return target.apply(thisArg, argumentsList);
-      } else if (thisArg === window.document) {
-        // when called from document (e.g., document.getElementById), document
-        // doesn't have a proxy
-        return target.apply(thisArg, argumentsList);
+      var returnVal;
+      if (thisArg === null || thisArg === undefined || !thisArg.hasOwnProperty("_src")) {
+        // Sometimes a proxy function is called with |this| as a non-proxy.
+        // Examples include |this| being |null|, |undefined|, |window.document|,
+        // or just a plain object that does not have a proxy.
+        returnVal = target.apply(thisArg, argumentsList);
       } else {
-        // or if it's called from an proxied object, |thisArg| will be a proxy
-        return target.apply(thisArg._src, argumentsList);
+        returnVal = target.apply(thisArg._src, argumentsList);
       }
+
+      if (typeof returnVal === "object") {
+        return createObjProxy(returnVal);
+      } else if (typeof returnVal === "function") {
+        return createFuncProxy(returnVal);
+      } else {
+        return returnVal;
+      }
+      return returnVal;
     }
   };
 
   // TODO: maybe we want to consolidate obj and func proxy creation?
+  // createObjProxy makes sure that if an obj already has a proxy, that
+  // existing proxy will be returned and NO new proxy will be created.
   function createObjProxy(node) {
     if (node === null || typeof node !== "object")
       return node;
+
+    if (node.hasOwnProperty("_proxy"))
+      return node._proxy;
 
     console.log("[Proxy] create Proxy for", node.constructor.name);
     var node_proxy = new Proxy(node, objHandler);
@@ -112,6 +106,12 @@
   }
 
   function createFuncProxy(func) {
+    if (func === null || typeof func !== "function")
+      return func;
+
+    if (func.hasOwnProperty("_proxy"))
+      return func._proxy;
+
     console.log("[Proxy] create Func Proxy for", func.name);
     var func_proxy = new Proxy(func, funcHandler);
     func._proxy = func_proxy;

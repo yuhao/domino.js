@@ -1,6 +1,10 @@
 <script>
   'use strict';
 
+  /* Legacy: overwrite methods (function properties) of window.document
+     such that they return proxied objects.
+     This is not needed now that we create proxy for function return values. */
+
   // Do not wrap. Seems like all of these are deprecated anyways.
   var methodsThatAreOwnedByHTMLDocument = [document.clear,
                                            document.captureEvents,

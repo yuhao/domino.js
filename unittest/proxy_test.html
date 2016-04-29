@@ -31,6 +31,18 @@ test('createObjProxy', function () {
   assert.isTrue(isOrHasProxy(testObj.nestedObjProp));
 });
   
+test('createObjProxyTwice', function () {
+  var testObj = {
+    x: 2
+  }
+  
+  var testObj_proxy1 = createObjProxy(testObj);
+  var testObj_proxy2 = createObjProxy(testObj);
+
+  assert.equal(testObj_proxy1, testObj_proxy2);
+  assert.deepEqual(testObj_proxy1, testObj_proxy2);
+});
+
 test('createFuncProxy', function () {
   var testFunc = function (a, b) {
     return a + b;
