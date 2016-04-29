@@ -4,6 +4,8 @@
 test('getElementById', function () {
   var el = document.getElementById("test");
 
+  assert.isTrue(isOrHasProxy(el));
+
   el.style.color = "blue";
   assert.equal(el.style.color, "blue")
   el.style.color = "red";
@@ -27,42 +29,59 @@ test('getElementById', function () {
 });
 
 test('getElementsByTagName', function () {
-  var before = document.getElementsByTagName("div").length;
+  // getElementsByTagName originally returns HTMLCollection, which is a
+  // live object. No need to call it again after append.
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByTagName
+  var allDIVs = document.getElementsByTagName("div");
+  var before = allDIVs.length;
   var newDiv = document.createElement("div"); 
   document.body.appendChild(newDiv);
-  var after = document.getElementsByTagName("div").length;
+  var after = allDIVs.length;
 
+  assert.isTrue(isOrHasProxy(allDIVs));
   assert.equal(after - before, 1);
 });
 
 test('getElementsByTagNameNS', function () {
+  // getElementsByTagNameNS returns live NodeList
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByTagNameNS
   var all = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "*");
   var divs = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "div");
   var body = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body");
 
+  assert.isTrue(isOrHasProxy(all));
+  assert.isTrue(isOrHasProxy(divs));
+  assert.isTrue(isOrHasProxy(body));
   assert.equal(body.length, 1)
   assert.isTrue(all.length > divs.length)
 });
 
 test('getElementsByClassName', function () {
+  // getElementsByClassName returns live HTMLCollection
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByClassName
   var el = document.getElementById("test");
   el.setAttribute("class", "democlass");
   var elClass = document.getElementsByClassName("democlass");
 
+  assert.isTrue(isOrHasProxy(elClass));
   assert.equal(elClass.length, 1);
   assert.equal(elClass[0], el);
 });
 
 test('getElementsByName', function () {
+  // getElementsByName returns live NodeList
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementsByName
   var el = document.getElementById("test");
 
-  var before = document.getElementsByName("testname").length;
+  var allTestnames = document.getElementsByName("testname");
+  var before = allTestnames.length;
   var newInput = document.createElement("input"); 
   newInput.name = "testname";
   document.body.insertBefore(newInput, el);
 
-  var after = document.getElementsByName("testname").length;
+  var after = allTestnames.length;
 
+  assert.isTrue(isOrHasProxy(allTestnames));
   assert.equal(before, 0);
   assert.equal(after, 1);
 
@@ -75,6 +94,7 @@ test('createElement', function () {
   var newDiv = document.createElement("div"); 
   document.body.insertBefore(newDiv, el);
 
+  assert.isTrue(isOrHasProxy(newDiv));
   assert.equal(newDiv.parentElement, document.body);
   assert.equal(newDiv.nextElementSibling, el);
   assert.equal(newDiv.nodeType, Node.ELEMENT_NODE);
@@ -86,6 +106,7 @@ test('createElementNS', function () {
   document.body.appendChild(newDiv);
   var after = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "div").length;
 
+  assert.isTrue(isOrHasProxy(newDiv));
   assert.equal(after - before, 1);
 });
 
@@ -94,6 +115,7 @@ test('createTextNode', function () {
   var newContent = document.createTextNode("new node"); 
   newDiv.appendChild(newContent);
 
+  assert.isTrue(isOrHasProxy(newContent));
   assert.equal(newContent.parentElement, newDiv);
   assert.equal(newContent.nodeType, Node.TEXT_NODE);
 });
@@ -111,6 +133,7 @@ test('createDocumentFragment', function () {
   ul.appendChild(docfrag);
   var allLIs = ul.getElementsByTagName("li");
 
+  assert.isTrue(isOrHasProxy(docfrag));
   assert.equal(allLIs.length, 5);
   assert.equal(docfrag.nodeType, Node.DOCUMENT_FRAGMENT_NODE);
 });
@@ -120,13 +143,9 @@ test('createComment', function () {
   var comment = document.createComment("Some comments");
   el.appendChild(comment);
 
+  assert.isTrue(isOrHasProxy(comment));
   assert.equal(comment.nodeType, Node.COMMENT_NODE);
   assert.equal(el.childNodes[el.childNodes.length - 1], comment);
-});
-
-test('createProcessingInstruction', function () {
-  // Not tested
-  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createProcessingInstruction
 });
 
 test('createAttribute', function () {
@@ -135,21 +154,8 @@ test('createAttribute', function () {
   attr.value = "testtset";
   el.setAttributeNode(attr);
 
+  assert.isTrue(isOrHasProxy(attr));
   assert.equal(el.getAttribute("testAttr"), "testtset");
-});
-
-test('createAttributeNS', function () {
-  // Not tested
-});
-
-test('createEvent', function () {
-  // Not tested
-  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
-});
-
-test('createRange', function () {
-  // Not tested
-  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange
 });
 
 test('createNodeIterator', function () {
@@ -167,6 +173,7 @@ test('createNodeIterator', function () {
     pars.push(currentNode);
   }
 
+  assert.isTrue(isOrHasProxy(nodeIterator));
   assert.equal(document.getElementsByTagName("div").length, pars.length);
 });
 
@@ -183,7 +190,61 @@ test('createTreeWalker', function () {
   while(treeWalker.nextNode())
     nodeList.push(treeWalker.currentNode);
 
+  assert.isTrue(isOrHasProxy(treeWalker));
   assert.equal(document.getElementsByTagName("div").length, nodeList.length);
+});
+
+test('elementFromPoint', function () {
+  var el = document.elementFromPoint(2, 2);
+
+  assert.isTrue(isOrHasProxy(el));
+});
+
+test('querySelector', function () {
+  var el = document.querySelector(".democlass");
+  var elClass = document.getElementsByClassName("democlass")[0];
+
+  assert.isTrue(isOrHasProxy(el));
+  assert.equal(el, elClass);
+});
+
+test('querySelectorAll', function () {
+  // querySelectorAll returns a non-live NodeList of element objects.
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll
+
+  var elList = document.querySelectorAll("#test, #dashboard");
+
+  assert.isTrue(isOrHasProxy(elList));
+  assert.equal(elList.length, 2);
+});
+
+test('importNode', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/importNode
+});
+
+test('adoptNode', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/adoptNode
+});
+
+test('createProcessingInstruction', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createProcessingInstruction
+});
+
+test('createAttributeNS', function () {
+  // Not tested
+});
+
+test('createEvent', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
+});
+
+test('createRange', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/createRange
 });
 
 test('createCDATASection', function () {
@@ -204,6 +265,26 @@ test('createNSResolver', function () {
 test('getSelection', function () {
   // Not tested
   // https://developer.mozilla.org/en-US/docs/Web/API/Document/getSelection
+});
+
+test('elementsFromPoint', function () {
+  // Not tested as it's not standardized
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/elementsFromPoint
+});
+
+test('caretRangeFromPoint', function () {
+  // Not tested as it's not standardized
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/caretRangeFromPoint
+});
+
+test('registerElement', function () {
+  // Not tested as it's not standardized
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/registerElement
+});
+
+test('evaluate', function () {
+  // Not tested
+  // https://developer.mozilla.org/en-US/docs/Web/API/Document/evaluate
 });
 
 </script>
