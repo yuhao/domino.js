@@ -30,7 +30,7 @@ test('createObjProxy', function () {
   assert.equal(testObj_proxy.nestedObjProp.nestedProp, "testProp");
   assert.isTrue(isOrHasProxy(testObj.nestedObjProp));
 });
-  
+ 
 test('createObjProxyTwice', function () {
   var testObj = {
     x: 2
@@ -74,7 +74,7 @@ test('createFuncProxy', function () {
   var testObj_proxy = createObjProxy(testObj);
   assert.equal(testObj_proxy.func(2, 3), 5);
 });
-  
+ 
 test('convertFuncArgBackToObj', function () {
   function a() {
     this.x = 2;
@@ -98,7 +98,7 @@ test('convertFuncArgBackToObj', function () {
   var b_proxy = createObjProxy(b);
   assert.equal(testObj_proxy.func(b_proxy), 4);
 });
-  
+ 
 test('createObjProxyFromNonObj', function () {
   var testInt = 2;
   var testInt_proxy = createObjProxy(testInt);
@@ -106,5 +106,18 @@ test('createObjProxyFromNonObj', function () {
   assert.isFalse(isOrHasProxy(testInt_proxy));
 });
 
+test('funcToString', function () {
+  function testFunc(a, b) {
+    return a + b;
+  }
+ 
+  assert.equal(testFunc.toString, Function.prototype.toString)
+ 
+  var testFunc_proxy = createFuncProxy(testFunc);
+ 
+  assert.notEqual(testFunc.toString, Function.prototype.toString)
+  assert.equal(testFunc.toString, testFunc_proxy.toString)
+});
+ 
 </script>
 

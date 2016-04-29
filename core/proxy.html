@@ -116,7 +116,12 @@
     var func_proxy = new Proxy(func, funcHandler);
     func._proxy = func_proxy;
     func_proxy._src = func;
-  
+
+    // Calling toString() on a proxy function will throw a TypeError.
+    func_proxy.toString = function() {
+      return Function.prototype.toString.apply(this._src);
+    };
+
     return func_proxy;
   }
 </script>
