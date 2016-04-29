@@ -98,7 +98,7 @@
 
   // TODO: maybe we want to consolidate obj and func proxy creation?
   function createObjProxy(node) {
-    if (typeof node !== "object")
+    if (node === null || typeof node !== "object")
       return node;
 
     console.log("[Proxy] create Proxy for", node.constructor.name);
