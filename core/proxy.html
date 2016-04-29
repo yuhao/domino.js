@@ -19,11 +19,12 @@
             return target;
           }
           else if (name === "_proxy") {
-            // obj_proxy._proxy shouldn't return obj._proxy._proxy
-            // which is obj_proxy._proxy, and then we have an infinite loop!
-            // TODO: This shouldn't be allowed anyways because technically a
+            // obj_proxy._proxy shouldn't return obj._proxy._proxy which is
+            // obj_proxy._proxy, and then we have an infinite loop! We print
+            // a warning and return obj._proxy to prevent the infinite loop.
+            // This shouldn't neven happen anyways because technically a
             // proxy object shouldn't have a _proxy property!
-            // For now, just return obj._proxy to prevent the infinite loop.
+            console.error("Should neve access obj_proxy._proxy!");
             return target[name];
           } else {
             return createObjProxy(target[name]);
