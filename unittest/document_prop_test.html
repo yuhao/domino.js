@@ -24,7 +24,7 @@ test('findPropOwner', function () {
   delete document.testProp2;
   delete document.testProp3;
 });
-  
+
 test('setExistingPropertyWithASetter', function () {
   // This set should succeed
   // document.title has an accessor descriptor
@@ -77,6 +77,8 @@ test('createNewPropAndSetValue', function () {
 test('getPropThatIsNull', function () {
   // document.onreset is null, so the getter function should check it
   var nonsense = document.onreset;
+
+  assert.equal(nonsense, null);
 });
 
 test('overwriteFunc', function () {
@@ -100,6 +102,14 @@ test('overwriteFunc', function () {
   delete document.__proto__.__proto__.testProp1;
   delete document.testProp1;
   delete document._testProp1;
+});
+
+test('deleteDocumentPrototypeProp', function () {
+  document.__proto__.__proto__.testProp1 = function() {return 1+4;}
+  instrumentOneDocumentProp("testProp1");
+  delete document.__proto__.__proto__;
+
+  assert.isTrue(document.hasOwnProperty("testProp1"));
 });
 
 </script>

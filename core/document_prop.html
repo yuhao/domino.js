@@ -90,14 +90,16 @@
     // TODO: If ownerOfProp is document itself, this implementation leads to
     // an infinite loop. For now, just return unconditionally without instrumentation.
     // One workaround maybe to define the instrumented property in document.__proto__
+    // https://github.com/yuhao/ticket.js/issues/6
     if (ownerOfProp instanceof HTMLDocument)
       return;
 
-    // Skip non-configurable properties because we won't be able to
-    // overwrite their getters. For now, seems like document.location and Node's
-    // capitalized properties are not configurable
-    // TODO: Figure out how to instrument them.
+    // Skip non-configurable properties as we can't overwrite their getters.
+    // TODO: Figure out how to instrument non-configurable props.
+    // https://github.com/yuhao/ticket.js/issues/7
     // TODO: Delete document.__proto__.prop doesn't delete document.prop
+    // After fixing this, change the "deleteDocumentPrototypeProp" unittest.
+    // https://github.com/yuhao/ticket.js/issues/8
     if (configOfProp === true) {
       if (getterOfProp !== undefined) {
         // This property has an accessor descriptor
