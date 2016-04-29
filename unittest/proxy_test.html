@@ -40,6 +40,20 @@ test('createObjProxyTwice', function () {
   var testObj_proxy2 = createObjProxy(testObj);
 
   assert.equal(testObj_proxy1, testObj_proxy2);
+
+  // _createObjProxy will create a new Proxy even if a proxy exists.
+  var _createObjProxy = function (node) {
+    var node_proxy = new Proxy(node, objHandler);
+    node._proxy = node_proxy;
+    node_proxy._src = node;
+  
+    return node_proxy;
+  }
+
+  testObj_proxy1 = _createObjProxy(testObj);
+  testObj_proxy2 = _createObjProxy(testObj);
+
+  assert.notEqual(testObj_proxy1, testObj_proxy2);
   assert.deepEqual(testObj_proxy1, testObj_proxy2);
 });
 
