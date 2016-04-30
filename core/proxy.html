@@ -88,9 +88,11 @@
   };
 
   // TODO: maybe we want to consolidate obj and func proxy creation?
+  // https://github.com/yuhao/ticket.js/issues/5
   // createObjProxy makes sure that if an obj already has a proxy, that
   // existing proxy will be returned and NO new proxy will be created.
-  // https://github.com/yuhao/ticket.js/issues/5
+  // TODO: Also it is not possible to create a proxy of a proxy object (good?).
+  // https://github.com/yuhao/ticket.js/issues/9
   function createObjProxy(node) {
     if (node === null || typeof node !== "object")
       return node;

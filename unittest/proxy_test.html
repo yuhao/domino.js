@@ -57,6 +57,17 @@ test('createObjProxyTwice', function () {
   assert.deepEqual(testObj_proxy1, testObj_proxy2);
 });
 
+test('createTwoLevelsOfObjProxy', function () {
+  var testObj = {
+    x: 2
+  }
+  
+  var testObj_proxy = createObjProxy(testObj);
+  var testObj_proxy_proxy = createObjProxy(testObj_proxy);
+
+  assert.equal(testObj_proxy_proxy, testObj_proxy);
+});
+
 test('createFuncProxy', function () {
   var testFunc = function (a, b) {
     return a + b;
