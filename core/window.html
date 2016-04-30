@@ -1,0 +1,7 @@
+<script>
+  'use strict';
+
+  window._getComputedStyle = window.getComputedStyle;
+  window.getComputedStyle = createFuncProxy(window._getComputedStyle);
+
+</script>
