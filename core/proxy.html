@@ -2,6 +2,9 @@
   'use strict';
 
   function isOrHasProxy(obj) {
+    if (obj === null)
+      return false;
+
     return obj.hasOwnProperty("_proxy") || obj.hasOwnProperty("_src")
   }
 
