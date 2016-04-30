@@ -7,7 +7,7 @@
 
   var objHandler = {
     get: function(target, name){
-      console.log("[Proxy] Read", name, typeof target[name]);
+      console.plog("[Proxy] Read", name, typeof target[name]);
 
       if (target[name] === null) {
         return null;
@@ -44,10 +44,10 @@
     set: function(target, name, val){
       try {
         target[name] = val;
-        console.log("[Proxy] Write", name, typeof target[name]);
+        console.plog("[Proxy] Write", name, typeof target[name]);
       }
       catch (e) {
-        //console.log(e)
+        console.plog(e)
         throw(e)
       }
       return true;
@@ -95,7 +95,7 @@
     if (node.hasOwnProperty("_proxy"))
       return node._proxy;
 
-    console.log("[Proxy] create Proxy for", node.constructor.name);
+    console.plog("[Proxy] create Proxy for", node.constructor.name);
     var node_proxy = new Proxy(node, objHandler);
     // Install cross-references between src and proxy
     // Note that both the src and proxy will have both cross-references!
@@ -112,7 +112,7 @@
     if (func.hasOwnProperty("_proxy"))
       return func._proxy;
 
-    console.log("[Proxy] create Func Proxy for", func.name);
+    console.plog("[Proxy] create Func Proxy for", func.name);
     var func_proxy = new Proxy(func, funcHandler);
     func._proxy = func_proxy;
     func_proxy._src = func;

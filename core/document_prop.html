@@ -23,7 +23,7 @@
   // Always try to return a proxy object if the property is an object.
   function documentPropGetter(prop, ownerOfProp, originalGetter) {
     return function() {
-      console.log("[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+      console.plog("[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = originalGetter.apply(window.document);
 
       if (typeof value === "object")
@@ -39,9 +39,9 @@
   function documentPropSetter(prop, ownerOfProp, originalSetter) {
     return function(newValue) {
       if (originalSetter === undefined) {
-        console.log("[Error] window.document." + prop + " does not have a setter");
+        console.error("window.document." + prop + " does not have a setter");
       } else {
-        console.log("[Setter] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+        console.plog("[Setter] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
         return originalSetter.call(window.document, newValue);
       }
     };
@@ -51,7 +51,7 @@
   // Always try to return a proxy object if the property is an object.
   function documentPropGetValue(prop, ownerOfProp) {
     return function() {
-      console.log("[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+      console.plog("[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
 
       if (typeof value === "object")
@@ -67,9 +67,9 @@
   function documentPropSetValue(prop, ownerOfProp, writable) {
     return function(newValue) {
       if (writable === false) {
-        console.log("[Error] window.document." + prop + " is not writable");
+        console.error("window.document." + prop + " is not writable");
       } else {
-        console.log("[Value] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+        console.plog("[Value] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
         ownerOfProp[prop] = newValue;
       }
     };

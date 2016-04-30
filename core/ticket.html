@@ -1,17 +1,10 @@
+<link rel="import" href="logging.html">
 <link rel="import" href="document_prop.html">
 <link rel="import" href="proxy.html">
 <link rel="import" href="window.html">
 
 <script>
   'use strict';
-
-  function EventLog (operator, operation, state) {
-    this.operator = operator;
-    this.operation = operation;
-    this.state = state;
-  }
-
-  var trace = [];
 
   // Instrument the getter/setter|value of window.document's properties
   // including all the function properties. The reason we do not create proxy

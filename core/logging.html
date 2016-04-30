@@ -1,0 +1,17 @@
+<script>
+  'use strict';
+  function EventLog (operator, operation, state) {
+    this.operator = operator;
+    this.operation = operation;
+    this.state = state;
+  }
+
+  var trace = [];
+
+  console.suppress = false;
+  console.plog = function() {
+    if (!console.suppress) {
+      console.log.apply(this, arguments);
+    }
+  }
+</script>
