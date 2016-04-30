@@ -5,7 +5,7 @@
     if (obj === null)
       return false;
 
-    return obj.hasOwnProperty("_proxy") || obj.hasOwnProperty("_src")
+    return obj.hasOwnProperty("_proxy") || obj.hasOwnProperty("_src");
   }
 
   var objHandler = {
@@ -25,9 +25,9 @@
             // obj_proxy._proxy shouldn't return obj._proxy._proxy which is
             // obj_proxy._proxy, and then we have an infinite loop! We print
             // a warning and return obj._proxy to prevent the infinite loop.
-            // This shouldn't neven happen anyways because technically a
-            // proxy object shouldn't have a _proxy property!
-            console.error("Should neve access obj_proxy._proxy!");
+            // This can only happen when we are checking isOrHasProxy of
+            // obj_proxy. Otherwise, it shouldn't neven happen because
+            // technically a proxy object shouldn't have a _proxy property!
             return target[name];
           } else {
             return createObjProxy(target[name]);
