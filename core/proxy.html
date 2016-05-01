@@ -1,6 +1,10 @@
 <script>
   'use strict';
 
+  // TODO: Better way of differentiating between is and has? This implementation
+  // doesn't do that. A correct but inefficient way is to create a global table
+  // recording each proxy object created.
+  // https://github.com/yuhao/ticket.js/issues/10
   function isOrHasProxy(obj) {
     if (obj === null)
       return false;
