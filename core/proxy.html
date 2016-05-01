@@ -38,6 +38,9 @@
           }
         } else if (typeof target[name] === "function") {
           if (name === "hasOwnProperty") {
+            // Do not create a proxy for |hasOwnProperty|, otherwise there is
+            // an infinite loop when calling |hasOwnProperty| from the
+            // |hasOwnProperty| proxy (see |apply| in funcHandler).
             return target[name];
           } else {
             return createFuncProxy(target[name]);
