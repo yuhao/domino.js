@@ -92,7 +92,7 @@ din.exportTo("doc", function(){
     // an infinite loop. For now, just return unconditionally without instrumentation.
     // One workaround maybe to define the instrumented property in document.__proto__
     // https://github.com/yuhao/ticket.js/issues/6
-    if (ownerOfProp instanceof HTMLDocument)
+    if (ownerOfProp === window.document)
       return;
 
     // Skip non-configurable properties as we can't overwrite their getters.
