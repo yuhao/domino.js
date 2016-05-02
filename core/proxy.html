@@ -1,6 +1,7 @@
 <script>
-  'use strict';
+'use strict';
 
+din.exportTo("proxy", function(){
   // TODO: Better way of differentiating between is and has? This implementation
   // doesn't do that. A correct but inefficient way is to create a global table
   // recording each proxy object created.
@@ -113,7 +114,7 @@
     // Note that both the src and proxy will have both cross-references!
     node._proxy = node_proxy;
     node_proxy._src = node;
-  
+
     return node_proxy;
   }
 
@@ -136,4 +137,11 @@
 
     return func_proxy;
   }
+
+  return {
+    isOrHasProxy: isOrHasProxy,
+    createObjProxy: createObjProxy,
+    createFuncProxy: createFuncProxy
+  }
+});
 </script>

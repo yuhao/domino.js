@@ -1,7 +1,15 @@
 <script>
-  'use strict';
+'use strict';
 
-  window._getComputedStyle = window.getComputedStyle;
-  window.getComputedStyle = createFuncProxy(window._getComputedStyle);
+din.exportTo("win", function(){
+  function instrumentWindowProp() {
+    window._getComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = din.proxy.createFuncProxy(window._getComputedStyle);
+  }
+
+  return {
+    instrumentWindowProp: instrumentWindowProp
+  }
+});
 
 </script>

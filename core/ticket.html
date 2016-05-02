@@ -1,17 +1,18 @@
+<link rel="import" href="base.html">
 <link rel="import" href="logging.html">
-<link rel="import" href="document_prop.html">
 <link rel="import" href="proxy.html">
+<link rel="import" href="document_prop.html">
 <link rel="import" href="window.html">
 
 <script>
-  'use strict';
+'use strict';
 
-  // Instrument the getter/setter|value of window.document's properties
-  // including all the function properties. The reason we do not create proxy
-  // for window.document itself (as we do for other objects) is that
-  // window.document is not writable/configurable. This for loop does not touch
-  // anything above |EventTarget| (i.e., prop in |Object| are not instrumented).
-  for (var prop in window.document) {
-    instrumentOneDocumentProp(prop);
-  }
+// Instrument the getter/setter|value of window.document's properties
+// including all the function properties. The reason we do not create proxy
+// for window.document itself (as we do for other objects) is that
+// window.document is not writable/configurable. This for loop does not touch
+// anything above |EventTarget| (i.e., prop in |Object| are not instrumented).
+din.doc.instrumentDocumentProp();
+
+din.win.instrumentWindowProp();
 </script>

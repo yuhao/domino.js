@@ -1,10 +1,11 @@
 <script>
-  'use strict';
+'use strict';
 
+din.exportTo("doc", function(){
   function findPropOwner(obj, prop) {
     var currentObj = obj;
     var owner = null;
-  
+
     while (true) {
       if (currentObj.hasOwnProperty(prop)) {
         owner = currentObj;
@@ -15,7 +16,7 @@
           break;
       }
     }
-  
+
     return owner;
   }
 
@@ -27,9 +28,9 @@
       var value = originalGetter.apply(window.document);
 
       if (typeof value === "object")
-        return createObjProxy(value)
+        return din.proxy.createObjProxy(value)
       else if (typeof value === "function")
-        return createFuncProxy(value)
+        return din.proxy.createFuncProxy(value)
 
       return value;
     };
@@ -55,9 +56,9 @@
       var value = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
 
       if (typeof value === "object")
-        return createObjProxy(value)
+        return din.proxy.createObjProxy(value)
       else if (typeof value === "function")
-        return createFuncProxy(value)
+        return din.proxy.createFuncProxy(value)
 
       return value;
     };
@@ -122,4 +123,17 @@
       }
     }
   }
+
+  function instrumentDocumentProp() {
+    for (var prop in window.document) {
+      instrumentOneDocumentProp(prop);
+    }
+  }
+
+  return {
+    findPropOwner: findPropOwner,
+    instrumentOneDocumentProp: instrumentOneDocumentProp,
+    instrumentDocumentProp: instrumentDocumentProp
+  }
+});
 </script>

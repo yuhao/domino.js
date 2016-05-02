@@ -11,12 +11,12 @@ test('findPropOwner', function () {
     writable: false
   });
 
-  assert.equal(findPropOwner(window.document, "testProp1").constructor.name, "HTMLDocument")
-  assert.isTrue(findPropOwner(window.document, "testProp1") instanceof Document);
-  assert.equal(findPropOwner(window.document, "testProp2").constructor.name, "Document")
-  assert.isTrue(findPropOwner(window.document, "testProp2") instanceof Node);
-  assert.equal(findPropOwner(window.document, "testProp3").constructor.name, "HTMLDocument")
-  assert.isTrue(findPropOwner(window.document, "testProp3") instanceof HTMLDocument);
+  assert.equal(din.doc.findPropOwner(window.document, "testProp1").constructor.name, "HTMLDocument")
+  assert.isTrue(din.doc.findPropOwner(window.document, "testProp1") instanceof Document);
+  assert.equal(din.doc.findPropOwner(window.document, "testProp2").constructor.name, "Document")
+  assert.isTrue(din.doc.findPropOwner(window.document, "testProp2") instanceof Node);
+  assert.equal(din.doc.findPropOwner(window.document, "testProp3").constructor.name, "HTMLDocument")
+  assert.isTrue(din.doc.findPropOwner(window.document, "testProp3") instanceof HTMLDocument);
 
   delete document.__proto__.testProp1;
   delete document.__proto__.__proto__.testProp2;
@@ -51,9 +51,9 @@ test('createNewPropAndSetValue', function () {
   document.__proto__.__proto__.testProp2 = "newProp";
   document.testProp3 = function() {return 1+4;}
 
-  instrumentOneDocumentProp("testProp1");
-  instrumentOneDocumentProp("testProp2");
-  instrumentOneDocumentProp("testProp3");
+  din.doc.instrumentOneDocumentProp("testProp1");
+  din.doc.instrumentOneDocumentProp("testProp2");
+  din.doc.instrumentOneDocumentProp("testProp3");
 
   document.testProp1.intval = 4;
   document.testProp1.stringVal = "newTest";
@@ -84,17 +84,17 @@ test('getPropThatIsNull', function () {
 test('overwriteFunc', function () {
   document.__proto__.__proto__.testProp1 = function() {return 1+4;}
 
-  instrumentOneDocumentProp("testProp1");
+  din.doc.instrumentOneDocumentProp("testProp1");
 
   document._testProp1 = document.testProp1;
 
-  assert.isTrue(isOrHasProxy(document._testProp1));
-  assert.isTrue(isOrHasProxy(document.testProp1));
+  assert.isTrue(din.proxy.isOrHasProxy(document._testProp1));
+  assert.isTrue(din.proxy.isOrHasProxy(document.testProp1));
 
   document.testProp1 = function () {return 5+6;}
-  assert.isFalse(isOrHasProxy(document.__proto__.__proto__.testProp1));
-  assert.isTrue(isOrHasProxy(document.testProp1));
-  assert.isTrue(isOrHasProxy(document.__proto__.__proto__.testProp1));
+  assert.isFalse(din.proxy.isOrHasProxy(document.__proto__.__proto__.testProp1));
+  assert.isTrue(din.proxy.isOrHasProxy(document.testProp1));
+  assert.isTrue(din.proxy.isOrHasProxy(document.__proto__.__proto__.testProp1));
 
   assert.equal(document._testProp1.call(document._testProp1), 5);
   assert.equal(document.testProp1.call(document.testProp1), 11);
@@ -106,7 +106,7 @@ test('overwriteFunc', function () {
 
 test('deleteDocumentPrototypeProp', function () {
   document.__proto__.__proto__.testProp1 = function() {return 1+4;}
-  instrumentOneDocumentProp("testProp1");
+  din.doc.instrumentOneDocumentProp("testProp1");
   delete document.__proto__.__proto__;
 
   assert.isTrue(document.hasOwnProperty("testProp1"));

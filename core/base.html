@@ -1,0 +1,21 @@
+<script>
+'use strict';
+
+var global = this; // window
+
+this.din = (function(){
+  if (global.din) {
+    console.warn("DIN has been initialized before");
+    return global.din;
+  }
+
+  function exportTo(namespace, func) {
+    din[namespace] = func();
+  }
+
+  return {
+    exportTo: exportTo
+  }
+})();
+</script>
+

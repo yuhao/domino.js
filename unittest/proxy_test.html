@@ -10,7 +10,7 @@ test('createObjProxy', function () {
     },
   }
 
-  var testObj_proxy = createObjProxy(testObj);
+  var testObj_proxy = din.proxy.createObjProxy(testObj);
   testObj.newIntVal = 4;
 
   // This should never happen in real code
@@ -23,12 +23,12 @@ test('createObjProxy', function () {
 
   assert.equal(testObj.intVal, testObj_proxy.intVal);
   assert.equal(testObj_proxy.newIntVal, 4);
-  assert.isTrue(isOrHasProxy(testObj));
-  assert.isFalse(isOrHasProxy(testObj.nestedObjProp));
+  assert.isTrue(din.proxy.isOrHasProxy(testObj));
+  assert.isFalse(din.proxy.isOrHasProxy(testObj.nestedObjProp));
 
   // This accesses testObj_proxy.nestedObjProp, and a proxy is created for it
   assert.equal(testObj_proxy.nestedObjProp.nestedProp, "testProp");
-  assert.isTrue(isOrHasProxy(testObj.nestedObjProp));
+  assert.isTrue(din.proxy.isOrHasProxy(testObj.nestedObjProp));
 });
  
 test('createObjProxyTwice', function () {
@@ -36,14 +36,14 @@ test('createObjProxyTwice', function () {
     x: 2
   }
   
-  var testObj_proxy1 = createObjProxy(testObj);
-  var testObj_proxy2 = createObjProxy(testObj);
+  var testObj_proxy1 = din.proxy.createObjProxy(testObj);
+  var testObj_proxy2 = din.proxy.createObjProxy(testObj);
 
   assert.equal(testObj_proxy1, testObj_proxy2);
 
   // _createObjProxy will create a new Proxy even if a proxy exists.
   var _createObjProxy = function (node) {
-    var node_proxy = new Proxy(node, objHandler);
+    var node_proxy = new Proxy(node, {});
     node._proxy = node_proxy;
     node_proxy._src = node;
   
@@ -62,8 +62,8 @@ test('createTwoLevelsOfObjProxy', function () {
     x: 2
   }
   
-  var testObj_proxy = createObjProxy(testObj);
-  var testObj_proxy_proxy = createObjProxy(testObj_proxy);
+  var testObj_proxy = din.proxy.createObjProxy(testObj);
+  var testObj_proxy_proxy = din.proxy.createObjProxy(testObj_proxy);
 
   assert.equal(testObj_proxy_proxy, testObj_proxy);
 });
@@ -73,7 +73,7 @@ test('createFuncProxy', function () {
     return a + b;
   }
 
-  var testFunc_proxy = createFuncProxy(testFunc);
+  var testFunc_proxy = din.proxy.createFuncProxy(testFunc);
 
   // the |this| argument of testFunc_proxy is undefined
   assert.equal(testFunc_proxy(2, 3), 5);
@@ -82,7 +82,7 @@ test('createFuncProxy', function () {
     func: testFunc
   }
 
-  var testObj_proxy = createObjProxy(testObj);
+  var testObj_proxy = din.proxy.createObjProxy(testObj);
   assert.equal(testObj_proxy.func(2, 3), 5);
 });
  
@@ -105,16 +105,16 @@ test('convertFuncArgBackToObj', function () {
     }
   }
 
-  var testObj_proxy = createObjProxy(testObj);
-  var b_proxy = createObjProxy(b);
+  var testObj_proxy = din.proxy.createObjProxy(testObj);
+  var b_proxy = din.proxy.createObjProxy(b);
   assert.equal(testObj_proxy.func(b_proxy), 4);
 });
  
 test('createObjProxyFromNonObj', function () {
   var testInt = 2;
-  var testInt_proxy = createObjProxy(testInt);
+  var testInt_proxy = din.proxy.createObjProxy(testInt);
 
-  assert.isFalse(isOrHasProxy(testInt_proxy));
+  assert.isFalse(din.proxy.isOrHasProxy(testInt_proxy));
 });
 
 test('funcToString', function () {
@@ -124,7 +124,7 @@ test('funcToString', function () {
  
   assert.equal(testFunc.toString, Function.prototype.toString)
  
-  var testFunc_proxy = createFuncProxy(testFunc);
+  var testFunc_proxy = din.proxy.createFuncProxy(testFunc);
  
   assert.notEqual(testFunc.toString, Function.prototype.toString)
   assert.equal(testFunc.toString, testFunc_proxy.toString)
