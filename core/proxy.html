@@ -2,17 +2,6 @@
 'use strict';
 
 din.exportTo("proxy", function(){
-  // TODO: Better way of differentiating between is and has? This implementation
-  // doesn't do that. A correct but inefficient way is to create a global table
-  // recording each proxy object created.
-  // https://github.com/yuhao/ticket.js/issues/10
-  function isOrHasProxy(obj) {
-    if (obj === null)
-      return false;
-
-    return obj.hasOwnProperty("_proxy") || obj.hasOwnProperty("_src");
-  }
-
   var objHandler = {
     get: function(target, name){
       console.plog("[Proxy] Read", name, typeof target[name]);
@@ -70,7 +59,7 @@ din.exportTo("proxy", function(){
       // Change the proxy argument to its _src
       var numArgs = argumentsList.length;
       for (var i = 0;i < numArgs;i++) {
-        if (typeof argumentsList[i] === "object" && isOrHasProxy(argumentsList[i]))
+        if (typeof argumentsList[i] === "object" && din.util.isOrHasProxy(argumentsList[i]))
           argumentsList[i] = argumentsList[i]._src;
       }
 
@@ -139,7 +128,6 @@ din.exportTo("proxy", function(){
   }
 
   return {
-    isOrHasProxy: isOrHasProxy,
     createObjProxy: createObjProxy,
     createFuncProxy: createFuncProxy
   }

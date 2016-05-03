@@ -4,7 +4,7 @@
 test('getElementById', function () {
   var el = document.getElementById("test");
 
-  assert.isTrue(din.proxy.isOrHasProxy(el));
+  assert.isTrue(din.util.isOrHasProxy(el));
 
   el.style.color = "blue";
   assert.equal(el.style.color, "blue")
@@ -38,7 +38,7 @@ test('getElementsByTagName', function () {
   document.body.appendChild(newDiv);
   var after = allDIVs.length;
 
-  assert.isTrue(din.proxy.isOrHasProxy(allDIVs));
+  assert.isTrue(din.util.isOrHasProxy(allDIVs));
   assert.equal(after - before, 1);
 });
 
@@ -49,9 +49,9 @@ test('getElementsByTagNameNS', function () {
   var divs = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "div");
   var body = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body");
 
-  assert.isTrue(din.proxy.isOrHasProxy(all));
-  assert.isTrue(din.proxy.isOrHasProxy(divs));
-  assert.isTrue(din.proxy.isOrHasProxy(body));
+  assert.isTrue(din.util.isOrHasProxy(all));
+  assert.isTrue(din.util.isOrHasProxy(divs));
+  assert.isTrue(din.util.isOrHasProxy(body));
   assert.equal(body.length, 1)
   assert.isTrue(all.length > divs.length)
 });
@@ -63,7 +63,7 @@ test('getElementsByClassName', function () {
   el.setAttribute("class", "democlass");
   var elClass = document.getElementsByClassName("democlass");
 
-  assert.isTrue(din.proxy.isOrHasProxy(elClass));
+  assert.isTrue(din.util.isOrHasProxy(elClass));
   assert.equal(elClass.length, 1);
   assert.equal(elClass[0], el);
 });
@@ -81,7 +81,7 @@ test('getElementsByName', function () {
 
   var after = allTestnames.length;
 
-  assert.isTrue(din.proxy.isOrHasProxy(allTestnames));
+  assert.isTrue(din.util.isOrHasProxy(allTestnames));
   assert.equal(before, 0);
   assert.equal(after, 1);
 
@@ -94,7 +94,7 @@ test('createElement', function () {
   var newDiv = document.createElement("div"); 
   document.body.insertBefore(newDiv, el);
 
-  assert.isTrue(din.proxy.isOrHasProxy(newDiv));
+  assert.isTrue(din.util.isOrHasProxy(newDiv));
   assert.equal(newDiv.parentElement, document.body);
   assert.equal(newDiv.nextElementSibling, el);
   assert.equal(newDiv.nodeType, Node.ELEMENT_NODE);
@@ -106,7 +106,7 @@ test('createElementNS', function () {
   document.body.appendChild(newDiv);
   var after = document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "div").length;
 
-  assert.isTrue(din.proxy.isOrHasProxy(newDiv));
+  assert.isTrue(din.util.isOrHasProxy(newDiv));
   assert.equal(after - before, 1);
 });
 
@@ -115,7 +115,7 @@ test('createTextNode', function () {
   var newContent = document.createTextNode("new node"); 
   newDiv.appendChild(newContent);
 
-  assert.isTrue(din.proxy.isOrHasProxy(newContent));
+  assert.isTrue(din.util.isOrHasProxy(newContent));
   assert.equal(newContent.parentElement, newDiv);
   assert.equal(newContent.nodeType, Node.TEXT_NODE);
 });
@@ -133,7 +133,7 @@ test('createDocumentFragment', function () {
   ul.appendChild(docfrag);
   var allLIs = ul.getElementsByTagName("li");
 
-  assert.isTrue(din.proxy.isOrHasProxy(docfrag));
+  assert.isTrue(din.util.isOrHasProxy(docfrag));
   assert.equal(allLIs.length, 5);
   assert.equal(docfrag.nodeType, Node.DOCUMENT_FRAGMENT_NODE);
 });
@@ -143,7 +143,7 @@ test('createComment', function () {
   var comment = document.createComment("Some comments");
   el.appendChild(comment);
 
-  assert.isTrue(din.proxy.isOrHasProxy(comment));
+  assert.isTrue(din.util.isOrHasProxy(comment));
   assert.equal(comment.nodeType, Node.COMMENT_NODE);
   assert.equal(el.childNodes[el.childNodes.length - 1], comment);
 });
@@ -154,7 +154,7 @@ test('createAttribute', function () {
   attr.value = "testtset";
   el.setAttributeNode(attr);
 
-  assert.isTrue(din.proxy.isOrHasProxy(attr));
+  assert.isTrue(din.util.isOrHasProxy(attr));
   assert.equal(el.getAttribute("testAttr"), "testtset");
 });
 
@@ -173,7 +173,7 @@ test('createNodeIterator', function () {
     pars.push(currentNode);
   }
 
-  assert.isTrue(din.proxy.isOrHasProxy(nodeIterator));
+  assert.isTrue(din.util.isOrHasProxy(nodeIterator));
   assert.equal(document.getElementsByTagName("div").length, pars.length);
 });
 
@@ -190,21 +190,21 @@ test('createTreeWalker', function () {
   while(treeWalker.nextNode())
     nodeList.push(treeWalker.currentNode);
 
-  assert.isTrue(din.proxy.isOrHasProxy(treeWalker));
+  assert.isTrue(din.util.isOrHasProxy(treeWalker));
   assert.equal(document.getElementsByTagName("div").length, nodeList.length);
 });
 
 test('elementFromPoint', function () {
   var el = document.elementFromPoint(2, 2);
 
-  assert.isTrue(din.proxy.isOrHasProxy(el));
+  assert.isTrue(din.util.isOrHasProxy(el));
 });
 
 test('querySelector', function () {
   var el = document.querySelector(".democlass");
   var elClass = document.getElementsByClassName("democlass")[0];
 
-  assert.isTrue(din.proxy.isOrHasProxy(el));
+  assert.isTrue(din.util.isOrHasProxy(el));
   assert.equal(el, elClass);
 });
 
@@ -214,7 +214,7 @@ test('querySelectorAll', function () {
 
   var elList = document.querySelectorAll("#test, #dashboard");
 
-  assert.isTrue(din.proxy.isOrHasProxy(elList));
+  assert.isTrue(din.util.isOrHasProxy(elList));
   assert.equal(elList.length, 2);
 });
 

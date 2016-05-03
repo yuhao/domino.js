@@ -2,24 +2,6 @@
 'use strict';
 
 din.exportTo("doc", function(){
-  function findPropOwner(obj, prop) {
-    var currentObj = obj;
-    var owner = null;
-
-    while (true) {
-      if (currentObj.hasOwnProperty(prop)) {
-        owner = currentObj;
-        break;
-      } else {
-        currentObj = currentObj.__proto__;
-        if (currentObj === null)
-          break;
-      }
-    }
-
-    return owner;
-  }
-
   // Getter for properties which have an accessor descriptor.
   // Always try to return a proxy object if the property is an object.
   function documentPropGetter(prop, ownerOfProp, originalGetter) {
@@ -81,7 +63,7 @@ din.exportTo("doc", function(){
 
     // Be careful, by doing this, document.hasOwnProperty(prop) will be true,
     // and calling findPropOwner will not return the original owner.
-    ownerOfProp = findPropOwner(window.document, prop);
+    ownerOfProp = din.util.findPropOwner(window.document, prop);
     getterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).get;
     setterOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).set;
     valueOfProp = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
@@ -131,7 +113,6 @@ din.exportTo("doc", function(){
   }
 
   return {
-    findPropOwner: findPropOwner,
     instrumentOneDocumentProp: instrumentOneDocumentProp,
     instrumentDocumentProp: instrumentDocumentProp
   }

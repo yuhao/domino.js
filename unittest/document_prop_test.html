@@ -11,12 +11,12 @@ test('findPropOwner', function () {
     writable: false
   });
 
-  assert.equal(din.doc.findPropOwner(window.document, "testProp1").constructor.name, "HTMLDocument")
-  assert.isTrue(din.doc.findPropOwner(window.document, "testProp1") instanceof Document);
-  assert.equal(din.doc.findPropOwner(window.document, "testProp2").constructor.name, "Document")
-  assert.isTrue(din.doc.findPropOwner(window.document, "testProp2") instanceof Node);
-  assert.equal(din.doc.findPropOwner(window.document, "testProp3").constructor.name, "HTMLDocument")
-  assert.isTrue(din.doc.findPropOwner(window.document, "testProp3") instanceof HTMLDocument);
+  assert.equal(din.util.findPropOwner(window.document, "testProp1").constructor.name, "HTMLDocument")
+  assert.isTrue(din.util.findPropOwner(window.document, "testProp1") instanceof Document);
+  assert.equal(din.util.findPropOwner(window.document, "testProp2").constructor.name, "Document")
+  assert.isTrue(din.util.findPropOwner(window.document, "testProp2") instanceof Node);
+  assert.equal(din.util.findPropOwner(window.document, "testProp3").constructor.name, "HTMLDocument")
+  assert.isTrue(din.util.findPropOwner(window.document, "testProp3") instanceof HTMLDocument);
 
   delete document.__proto__.testProp1;
   delete document.__proto__.__proto__.testProp2;
@@ -88,13 +88,13 @@ test('overwriteFunc', function () {
 
   document._testProp1 = document.testProp1;
 
-  assert.isTrue(din.proxy.isOrHasProxy(document._testProp1));
-  assert.isTrue(din.proxy.isOrHasProxy(document.testProp1));
+  assert.isTrue(din.util.isOrHasProxy(document._testProp1));
+  assert.isTrue(din.util.isOrHasProxy(document.testProp1));
 
   document.testProp1 = function () {return 5+6;}
-  assert.isFalse(din.proxy.isOrHasProxy(document.__proto__.__proto__.testProp1));
-  assert.isTrue(din.proxy.isOrHasProxy(document.testProp1));
-  assert.isTrue(din.proxy.isOrHasProxy(document.__proto__.__proto__.testProp1));
+  assert.isFalse(din.util.isOrHasProxy(document.__proto__.__proto__.testProp1));
+  assert.isTrue(din.util.isOrHasProxy(document.testProp1));
+  assert.isTrue(din.util.isOrHasProxy(document.__proto__.__proto__.testProp1));
 
   assert.equal(document._testProp1.call(document._testProp1), 5);
   assert.equal(document.testProp1.call(document.testProp1), 11);
