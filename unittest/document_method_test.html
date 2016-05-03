@@ -3,7 +3,6 @@
   
 test('getElementById', function () {
   var el = document.getElementById("test");
-
   assert.isTrue(din.util.isOrHasProxy(el));
 
   el.style.color = "blue";
@@ -24,8 +23,11 @@ test('getElementById', function () {
       }
     }
   }
-
   assert.isTrue(cond)
+
+  var jel = $("#test");
+  jel.css("color", "blue");
+  assert.equal(jel.css("color"), "rgb(0, 0, 255)");
 });
 
 test('getElementsByTagName', function () {
