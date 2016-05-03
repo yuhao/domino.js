@@ -65,9 +65,11 @@ din.exportTo("proxy", function(){
 
       var returnVal;
       if (thisArg === null || thisArg === undefined || !thisArg.hasOwnProperty("_src")) {
-        // Sometimes a proxy function is called with |this| as a non-proxy.
-        // Examples include |this| being |null|, |undefined|, |window.document|,
-        // or just a plain object that does not have a proxy.
+		// Sometimes a proxy function is called with |this| as a non-proxy.
+		// Examples include |this| being |null|, |undefined|, |window.document|,
+		// or just a plain object that does not have a proxy.  Note that it's
+		// possible for window.document to have ._src if it's set through
+		// someEl.ownerDocument
         returnVal = target.apply(thisArg, argumentsList);
       } else {
         returnVal = target.apply(thisArg._src, argumentsList);
