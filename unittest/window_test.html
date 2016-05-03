@@ -4,6 +4,7 @@
 test('getComputedStyle', function () {
   var el = document.getElementById("test");
 
+  el.style.color = "red";
   var style = window.getComputedStyle(el);
   assert.equal(style.color, "rgb(255, 0, 0)");
 
