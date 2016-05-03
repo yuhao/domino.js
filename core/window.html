@@ -3,13 +3,45 @@
 
 din.exportTo("win", function(){
   function instrumentWindowProp() {
-    window._getComputedStyle = window.getComputedStyle;
-    window.getComputedStyle = din.proxy.createFuncProxy(window._getComputedStyle);
+    var getterOfProp, setterOfProp, writableOfProp;
+
+    // Three notes:
+    // 1) We only instrument the property of window itself.
+	// 2) Because of 1, we create proxy for each window prop instead of
+	// overwriting its getter and setter (as we do for window.document) to avoid
+	// infinite loops.
+    // 3) Because of 2, we will miss any prop that is neither an object or a
+    // function (luckily all window props as of now are either obj or func).
+    var props = Object.keys(window);
+    for (var i = 0; i < props.length; i++) {
+      var prop = props[i];
+
+      // Shall we skip them? Doesn't seem harmful to create a proxy for window.
+      // Ths includes: parent, top, frames, self, window, global(DIN-induced).
+      if (prop === "din" ||     // No need to create a proxy for DIN itself
+          prop === "console" || // This would lead to an infinite loop
+          prop === "global" ||  // No need to wrap DIN related prop
+          prop === "location")
+        continue;
+
+      getterOfProp = Object.getOwnPropertyDescriptor(window, prop).get;
+      setterOfProp = Object.getOwnPropertyDescriptor(window, prop).set;
+      writableOfProp = Object.getOwnPropertyDescriptor(window, prop).writable;
+
+      // That is, we can overwrite this property.
+      if ((getterOfProp === undefined && writableOfProp === true) ||
+          (getterOfProp !== undefined && setterOfProp !== undefined)) {
+        var shadowProp = window[prop];
+        if (typeof shadowProp === "function")
+          window[prop] = din.proxy.createFuncProxy(shadowProp);
+        else if (typeof shadowProp === "object")
+          window[prop] = din.proxy.createObjProxy(shadowProp);
+      }
+    }
   }
 
   return {
     instrumentWindowProp: instrumentWindowProp
   }
 });
-
 </script>

@@ -1,0 +1,35 @@
+<script type="text/javascript">
+'use strict';
+ 
+test('getComputedStyle', function () {
+  var el = document.getElementById("test");
+
+  var style = window.getComputedStyle(el);
+  assert.equal(style.color, "rgb(255, 0, 0)");
+
+  var _style = window.getComputedStyle._src.call(window, el._src);
+  assert.equal(style.color, _style.color);
+});
+
+test('setTimeout', function () {
+  var el = document.getElementById("test");
+
+  window.setTimeout(function(){
+    el.style.color = "black";
+    assert.equal(el.style.color, "black");
+  }, 0);
+});
+
+test('frames', function () {
+  var thisFrame = window.frames;
+
+  assert.equal(thisFrame._src, window);
+});
+
+test('self', function () {
+  var selfWindow = window.self;
+
+  assert.equal(selfWindow._src, window);
+});
+
+</script>
