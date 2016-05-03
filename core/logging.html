@@ -1,5 +1,7 @@
 <script>
-  'use strict';
+'use strict';
+
+din.exportTo("logging", function(){
   function EventLog (operator, operation, state) {
     this.operator = operator;
     this.operation = operation;
@@ -8,10 +10,15 @@
 
   var trace = [];
 
-  console.suppress = true;
-  console.plog = function() {
-    if (!console.suppress) {
-      console.log.apply(this, arguments);
-    }
+  return {
+    EventLog: EventLog
   }
+});
+
+console.suppress = true;
+console.plog = function() {
+  if (!console.suppress) {
+    console.log.apply(this, arguments);
+  }
+}
 </script>
