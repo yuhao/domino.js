@@ -1,9 +1,14 @@
 <link rel="import" href="base.html">
+<link rel="import" href="util.html">
 <link rel="import" href="document.html">
 <link rel="import" href="window.html">
 
 <script>
 'use strict';
+
+document.addEventListener("DOMContentLoaded", function() {
+  din.util.assignInitialGID();
+});
 
 din.doc.instrumentDocumentProp();
 
