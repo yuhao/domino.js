@@ -1,0 +1,39 @@
+<script type="text/javascript">
+'use strict';
+
+test('findPropOwner', function () {
+  document.__proto__.testProp1 = "testProp1";
+  document.__proto__.__proto__.testProp2 = "testProp2";
+  Object.defineProperty(window.document, "testProp3", {
+    enumerable: true,
+    configurable: true,
+    value: "testProp3",
+    writable: false
+  });
+
+  assert.equal(din.util.findPropOwner(window.document, "testProp1").constructor.name, "HTMLDocument")
+  assert.isTrue(din.util.findPropOwner(window.document, "testProp1") instanceof Document);
+  assert.equal(din.util.findPropOwner(window.document, "testProp2").constructor.name, "Document")
+  assert.isTrue(din.util.findPropOwner(window.document, "testProp2") instanceof Node);
+  assert.equal(din.util.findPropOwner(window.document, "testProp3").constructor.name, "HTMLDocument")
+  assert.isTrue(din.util.findPropOwner(window.document, "testProp3") instanceof HTMLDocument);
+
+  delete document.__proto__.testProp1;
+  delete document.__proto__.__proto__.testProp2;
+  delete document.testProp1;
+  delete document.testProp2;
+  delete document.testProp3;
+});
+
+test('isOrHasProxy', function () {
+  var testObj = {
+    intVal: 2,
+  }
+  assert.isFalse(din.util.isOrHasProxy(testObj));
+
+  var testObj_proxy = din.proxy.createObjProxy(testObj);
+  assert.isTrue(din.util.isOrHasProxy(testObj));
+});
+
+</script>
+
