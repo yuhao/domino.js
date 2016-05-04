@@ -33,10 +33,10 @@ din.exportTo("util", function(){
 
   function predLog() {
     if (arguments[0]) {
-      delete arguments[0];
-      arguments.length--;
-      // console.log expect |this| to be console itself.
-      console.log.apply(console, arguments);
+	  // arguments is not an Array so first convert it and then removes the
+	  // predicate. Also console.log expect |this| to be console itself.
+      var args = Array.from(arguments);
+      console.log.apply(console, args.slice(1, args.length));
     }
   }
 
