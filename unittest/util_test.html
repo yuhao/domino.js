@@ -35,5 +35,14 @@ test('isOrHasProxy', function () {
   assert.isTrue(din.util.isOrHasProxy(testObj));
 });
 
+test('countDOMNodes', function () {
+  var before = din.util.countDOMNodes(window.document);
+  var newDiv = document.createElement("div"); 
+  document.body.appendChild(newDiv);
+  var after = din.util.countDOMNodes(window.document);
+
+  assert.isTrue(after - before === 1);
+});
+
 </script>
 

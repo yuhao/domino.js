@@ -40,9 +40,25 @@ din.exportTo("util", function(){
     }
   }
 
+  function countDOMNodes(obj) {
+    var num = 0;
+
+    if (obj.children) {
+      var len = obj.children.length;
+      num = len;
+
+      for (var i = 0; i < len; i++) {
+        var child = obj.children[i];
+        num += countDOMNodes(child);
+      }
+    }
+    return num;
+  }
+
   return {
     findPropOwner: findPropOwner,
     isOrHasProxy: isOrHasProxy,
+    countDOMNodes: countDOMNodes,
     predLog: predLog
   }
 });
