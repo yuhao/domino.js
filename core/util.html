@@ -31,9 +31,17 @@ din.exportTo("util", function(){
     return owner;
   }
 
+  var logSuppress = true;
+  function log() {
+    if (!logSuppress) {
+      console.log.apply(this, arguments);
+    }
+  }
+
   return {
     findPropOwner: findPropOwner,
-    isOrHasProxy: isOrHasProxy
+    isOrHasProxy: isOrHasProxy,
+    log: log
   }
 });
 </script>

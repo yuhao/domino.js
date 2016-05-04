@@ -1,4 +1,5 @@
 <link rel="import" href="inspection.html">
+<link rel="import" href="util.html">
 
 <script>
 'use strict';
@@ -6,7 +7,7 @@
 din.exportTo("proxy", function(){
   var objHandler = {
     get: function(target, name){
-      console.plog("[Proxy] Read", name, typeof target[name]);
+      din.util.log("[Proxy] Read", name, typeof target[name]);
 
       if (target[name] === null) {
         return null;
@@ -46,10 +47,10 @@ din.exportTo("proxy", function(){
     set: function(target, name, val){
       try {
         target[name] = val;
-        console.plog("[Proxy] Write", name, typeof target[name]);
+        din.util.log("[Proxy] Write", name, typeof target[name]);
       }
       catch (e) {
-        console.plog(e)
+        din.util.log(e)
         throw(e)
       }
       return true;
@@ -103,7 +104,7 @@ din.exportTo("proxy", function(){
     if (node.hasOwnProperty("_proxy"))
       return node._proxy;
 
-    console.plog("[Proxy] create Proxy for", node.constructor.name);
+    din.util.log("[Proxy] create Proxy for", node.constructor.name);
     var node_proxy = new Proxy(node, objHandler);
 
     // Install cross-references between src and proxy
@@ -132,7 +133,7 @@ din.exportTo("proxy", function(){
     if (func.hasOwnProperty("_proxy"))
       return func._proxy;
 
-    console.plog("[Proxy] create Func Proxy for", func.name);
+    din.util.log("[Proxy] create Func Proxy for", func.name);
     var func_proxy = new Proxy(func, funcHandler);
 
     Object.defineProperty(func, "_proxy", {
