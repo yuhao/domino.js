@@ -130,5 +130,22 @@ test('funcToString', function () {
   assert.equal(testFunc.toString, testFunc_proxy.toString)
 });
  
+test('enumeratableProxy', function () {
+  var testObj = {
+    x: 3
+  }
+  var testObj_proxy = din.proxy.createObjProxy(testObj);
+
+  // If _proxy and _src were enumerable, this would be an infinite loop.
+  // This is a demonstrative example of a bug that we had in jQuery |n.extend()|
+  function foo(obj) {
+    for (var prop in obj) {
+      foo(obj[prop]);
+    }
+  }
+
+  foo(testObj);
+});
+
 </script>
 

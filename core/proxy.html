@@ -100,10 +100,22 @@ din.exportTo("proxy", function(){
 
     console.plog("[Proxy] create Proxy for", node.constructor.name);
     var node_proxy = new Proxy(node, objHandler);
+
     // Install cross-references between src and proxy
     // Note that both the src and proxy will have both cross-references!
-    node._proxy = node_proxy;
-    node_proxy._src = node;
+    Object.defineProperty(node, "_proxy", {
+      configurable: true,
+      enumerable: false, // This is vital to avoid infinite loops!
+      value: node_proxy,
+      writable: true
+    })
+
+    Object.defineProperty(node_proxy, "_src", {
+      configurable: true,
+      enumerable: false, // This is vital to avoid infinite loops!
+      value: node,
+      writable: true
+    })
 
     return node_proxy;
   }
@@ -117,8 +129,20 @@ din.exportTo("proxy", function(){
 
     console.plog("[Proxy] create Func Proxy for", func.name);
     var func_proxy = new Proxy(func, funcHandler);
-    func._proxy = func_proxy;
-    func_proxy._src = func;
+
+    Object.defineProperty(func, "_proxy", {
+      configurable: true,
+      enumerable: false, // This is vital to avoid infinite loops!
+      value: func_proxy,
+      writable: true
+    })
+
+    Object.defineProperty(func_proxy, "_src", {
+      configurable: true,
+      enumerable: false, // This is vital to avoid infinite loops!
+      value: func,
+      writable: true
+    })
 
     // Calling toString() on a proxy function will throw a TypeError.
     func_proxy.toString = function() {
