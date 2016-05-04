@@ -1,10 +1,12 @@
+<link rel="import" href="util.html">
+
 <script>
 'use strict';
 
 din.exportTo("inspect", function(){
   function funcEntry(target, thisArg, argumentsList) {
     if (thisArg)
-      console.log(target.name, thisArg.constructor.name);
+      din.util.log(target.name, thisArg.constructor.name);
     if (target.name === "createElement") {
       function countDOM(obj) {
         var num = 0;
@@ -20,16 +22,27 @@ din.exportTo("inspect", function(){
         return num;
       }
 
-      console.log(countDOM(window.document));
+      din.util.log(countDOM(window.document));
     }
   }
 
   function funcExit(target, thisArg, argumentsList, returnVal) {
   }
 
+  function objGet(target, name) {
+    din.util.log("[Proxy] Read", name, typeof target[name]);
+
+  }
+
+  function objSet(target, name, val) {
+    din.util.log("[Proxy] Write", name, typeof target[name]);
+  }
+
   return {
     funcEntry: funcEntry,
-    funcExit: funcExit
+    funcExit: funcExit,
+    objGet: objGet,
+    objSet: objSet
   }
 });
 </script>

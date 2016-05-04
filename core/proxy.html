@@ -7,7 +7,7 @@
 din.exportTo("proxy", function(){
   var objHandler = {
     get: function(target, name){
-      din.util.log("[Proxy] Read", name, typeof target[name]);
+      din.inspect.objGet(target, name);
 
       if (target[name] === null) {
         return null;
@@ -46,8 +46,8 @@ din.exportTo("proxy", function(){
 
     set: function(target, name, val){
       try {
+        din.inspect.objSet(target, name, val);
         target[name] = val;
-        din.util.log("[Proxy] Write", name, typeof target[name]);
       }
       catch (e) {
         din.util.log(e)
