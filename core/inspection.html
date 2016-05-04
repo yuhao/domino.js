@@ -5,8 +5,10 @@
 
 din.exportTo("inspect", function(){
   function funcEntry(target, thisArg, argumentsList) {
-    if (thisArg)
-      din.util.log(target.name, thisArg.constructor.name);
+    din.util.predLog(false, //(thisArg && (thisArg !== undefined)),
+        target.name,
+        (thisArg === undefined) ? "undefined" : thisArg.constructor.name);
+
     if (target.name === "createElement") {
       function countDOM(obj) {
         var num = 0;
@@ -22,7 +24,7 @@ din.exportTo("inspect", function(){
         return num;
       }
 
-      din.util.log(countDOM(window.document));
+      din.util.predLog(false, countDOM(window.document));
     }
   }
 
@@ -30,12 +32,12 @@ din.exportTo("inspect", function(){
   }
 
   function objGet(target, name) {
-    din.util.log("[Proxy] Read", name, typeof target[name]);
+    din.util.predLog(false, "[Proxy] Read", name, typeof target[name]);
 
   }
 
   function objSet(target, name, val) {
-    din.util.log("[Proxy] Write", name, typeof target[name]);
+    din.util.predLog(false, "[Proxy] Write", name, typeof target[name]);
   }
 
   return {

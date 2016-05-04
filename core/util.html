@@ -31,17 +31,19 @@ din.exportTo("util", function(){
     return owner;
   }
 
-  var logSuppress = true;
-  function log() {
-    if (!logSuppress) {
-      console.log.apply(this, arguments);
+  function predLog() {
+    if (arguments[0]) {
+      delete arguments[0];
+      arguments.length--;
+      // console.log expect |this| to be console itself.
+      console.log.apply(console, arguments);
     }
   }
 
   return {
     findPropOwner: findPropOwner,
     isOrHasProxy: isOrHasProxy,
-    log: log
+    predLog: predLog
   }
 });
 </script>

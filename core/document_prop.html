@@ -9,7 +9,7 @@ din.exportTo("doc", function(){
   // Always try to return a proxy object if the property is an object.
   function documentPropGetter(prop, ownerOfProp, originalGetter) {
     return function() {
-      din.util.log("[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+      din.util.predLog(false, "[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = originalGetter.apply(window.document);
 
       if (typeof value === "object")
@@ -27,7 +27,7 @@ din.exportTo("doc", function(){
       if (originalSetter === undefined) {
         console.error("window.document." + prop + " does not have a setter");
       } else {
-        din.util.log("[Setter] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+        din.util.predLog(false, "[Setter] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
         return originalSetter.call(window.document, newValue);
       }
     };
@@ -37,7 +37,7 @@ din.exportTo("doc", function(){
   // Always try to return a proxy object if the property is an object.
   function documentPropGetValue(prop, ownerOfProp) {
     return function() {
-      din.util.log("[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+      din.util.predLog(false, "[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
 
       if (typeof value === "object")
@@ -55,7 +55,7 @@ din.exportTo("doc", function(){
       if (writable === false) {
         console.error("window.document." + prop + " is not writable");
       } else {
-        din.util.log("[Value] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
+        din.util.predLog(false, "[Value] Write window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
         ownerOfProp[prop] = newValue;
       }
     };

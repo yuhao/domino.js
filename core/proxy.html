@@ -50,7 +50,7 @@ din.exportTo("proxy", function(){
         target[name] = val;
       }
       catch (e) {
-        din.util.log(e)
+        din.util.predLog(false, e)
         throw(e)
       }
       return true;
@@ -105,7 +105,7 @@ din.exportTo("proxy", function(){
     if (node.hasOwnProperty("_proxy"))
       return node._proxy;
 
-    din.util.log("[Proxy] create Proxy for", node.constructor.name);
+    din.util.predLog(false, "[Proxy] create Proxy for", node.constructor.name);
     var node_proxy = new Proxy(node, objHandler);
 
     // Install cross-references between src and proxy
@@ -134,7 +134,7 @@ din.exportTo("proxy", function(){
     if (func.hasOwnProperty("_proxy"))
       return func._proxy;
 
-    din.util.log("[Proxy] create Func Proxy for", func.name);
+    din.util.predLog(false, "[Proxy] create Func Proxy for", func.name);
     var func_proxy = new Proxy(func, funcHandler);
 
     Object.defineProperty(func, "_proxy", {
