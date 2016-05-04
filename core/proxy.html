@@ -59,14 +59,14 @@ din.exportTo("proxy", function(){
 
   var funcHandler = {
     apply: function(target, thisArg, argumentsList) {
-      din.inspect.funcEntry(target, thisArg, argumentsList);
-
       // Change the proxy argument to its _src
       var numArgs = argumentsList.length;
       for (var i = 0;i < numArgs;i++) {
         if (typeof argumentsList[i] === "object" && din.util.isOrHasProxy(argumentsList[i]))
           argumentsList[i] = argumentsList[i]._src;
       }
+
+      din.inspect.funcEntry(target, thisArg, argumentsList);
 
       var returnVal;
       if (thisArg === null || thisArg === undefined || !thisArg.hasOwnProperty("_src")) {
@@ -80,13 +80,14 @@ din.exportTo("proxy", function(){
         returnVal = target.apply(thisArg._src, argumentsList);
       }
 
+      din.inspect.funcExit(target, thisArg, argumentsList, returnVal);
+
       if (typeof returnVal === "object") {
         returnVal = createObjProxy(returnVal);
       } else if (typeof returnVal === "function") {
         returnVal = createFuncProxy(returnVal);
       }
 
-      din.inspect.funcExit(target, thisArg, argumentsList, returnVal);
       return returnVal;
     }
   };
