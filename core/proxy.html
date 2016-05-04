@@ -1,3 +1,5 @@
+<link rel="import" href="inspection.html">
+
 <script>
 'use strict';
 
@@ -56,6 +58,8 @@ din.exportTo("proxy", function(){
 
   var funcHandler = {
     apply: function(target, thisArg, argumentsList) {
+      din.inspect.funcEntry(target, thisArg, argumentsList);
+
       // Change the proxy argument to its _src
       var numArgs = argumentsList.length;
       for (var i = 0;i < numArgs;i++) {
@@ -76,12 +80,13 @@ din.exportTo("proxy", function(){
       }
 
       if (typeof returnVal === "object") {
-        return createObjProxy(returnVal);
+        returnVal = createObjProxy(returnVal);
       } else if (typeof returnVal === "function") {
-        return createFuncProxy(returnVal);
-      } else {
-        return returnVal;
+        returnVal = createFuncProxy(returnVal);
       }
+
+      din.inspect.funcExit(target, thisArg, argumentsList, returnVal);
+      return returnVal;
     }
   };
 
