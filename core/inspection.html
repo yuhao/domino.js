@@ -9,31 +9,19 @@ din.exportTo("inspect", function(){
         target.name,
         (thisArg === undefined) ? "undefined" : thisArg.constructor.name);
 
-    if (target.name === "createElement") {
-      function countDOM(obj) {
-        var num = 0;
-        if (obj.children) {
-          var len = obj.children.length;
-          num = len;
-
-          for (var i = 0; i < len; i++) {
-            var child = obj.children[i];
-            num += countDOM(child);
-          }
-        }
-        return num;
-      }
-
-      din.util.predLog(false, countDOM(window.document));
-    }
+    //din.util.countDOMNodes(window.document);
+    if (thisArg instanceof HTMLElement)
+      din.util.predLog(true, target.name, thisArg.constructor.name, thisArg._gid);
   }
 
   function funcExit(target, thisArg, argumentsList, returnVal) {
+    if (target.name === "createElement") {
+      din.util.assignDOMGID(returnVal);
+    }
   }
 
   function objGet(target, name) {
     din.util.predLog(false, "[Proxy] Read", name, typeof target[name]);
-
   }
 
   function objSet(target, name, val) {
