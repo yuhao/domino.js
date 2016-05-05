@@ -55,41 +55,11 @@ din.exportTo("util", function(){
     return num;
   }
 
-  var gid = 0;
-  function assignDOMGID(node) {
-    if (!node.hasOwnProperty("_gid")) {
-      Object.defineProperty(node, "_gid", {
-        configurable: false,
-        enumerable: false,
-        value: gid++,
-        writable: false
-      });
-    }
-  }
-
-  function assignInitialGID() {
-    var pendingNode = [window.document.children[0]];
-
-    while (pendingNode.length) {
-      var node = pendingNode.shift();
-      din.util.assignDOMGID(node);
-
-      var numChildren = node.children.length;
-      for (var i = 0; i < numChildren; i++) {
-        var child = node.children[i];
-        pendingNode.push(child);
-      }
-    }
-  }
-
   return {
     findPropOwner: findPropOwner,
     isOrHasProxy: isOrHasProxy,
     countDOMNodes: countDOMNodes,
-    assignDOMGID: assignDOMGID,
-    assignInitialGID: assignInitialGID,
-    predLog: predLog,
-    gid: gid
+    predLog: predLog
   }
 });
 </script>

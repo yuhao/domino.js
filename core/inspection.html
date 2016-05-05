@@ -5,19 +5,19 @@
 
 din.exportTo("inspect", function(){
   function funcEntry(target, thisArg, argumentsList) {
-    din.util.predLog(false, //(thisArg && (thisArg !== undefined)),
-        target.name,
-        (thisArg === undefined) ? "undefined" : thisArg.constructor.name);
-
-    //din.util.countDOMNodes(window.document);
-    if (thisArg instanceof HTMLElement)
-      din.util.predLog(true, target.name, thisArg.constructor.name, thisArg._gid);
   }
 
   function funcExit(target, thisArg, argumentsList, returnVal) {
-    if (target.name === "createElement") {
-      din.util.assignDOMGID(returnVal);
-    }
+    din.util.predLog(false,
+        (thisArg === undefined) ? "undefined" : thisArg.constructor.name,
+        "(",
+        thisArg instanceof Node ? thisArg.gid : "undefined",
+        ")",
+        "call",
+        target.name,
+        "return",
+        returnVal instanceof Node ? returnVal.tagName : "",
+        returnVal instanceof Node ? returnVal.gid : "");
   }
 
   function objGet(target, name) {

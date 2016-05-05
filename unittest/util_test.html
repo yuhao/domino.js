@@ -44,14 +44,5 @@ test('countDOMNodes', function () {
   assert.isTrue(after - before === 1);
 });
 
-test('assignDOMGID', function () {
-  var newDiv1 = document.createElement("div"); 
-  din.util.assignDOMGID(newDiv1);
-  var newDiv2 = document.createElement("div"); 
-  din.util.assignDOMGID(newDiv2);
-
-  assert.isTrue(newDiv2._gid - newDiv1._gid === 1);
-});
-
 </script>
 

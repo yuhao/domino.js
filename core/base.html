@@ -9,12 +9,35 @@ this.din = (function(){
     return global.din;
   }
 
+  var gid = 0;
+
   function exportTo(namespace, func) {
     din[namespace] = func();
   }
 
+  function init() {
+    Object.defineProperty(Node.prototype, "_gid", {
+      configurable: false,
+      enumerable: false,
+      value: undefined,
+      writable: true
+    });
+
+    Object.defineProperty(Node.prototype, "gid", {
+      configurable: false,
+      enumerable: false,
+      get: function() {
+        if (this._gid === undefined) {
+          this._gid = gid++;
+        }
+        return this._gid;
+      }
+    });
+  }
+
   return {
-    exportTo: exportTo
+    exportTo: exportTo,
+    init: init
   }
 })();
 

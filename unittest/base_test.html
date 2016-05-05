@@ -1,0 +1,21 @@
+<script type="text/javascript">
+'use strict';
+
+test('defineNodeGID', function () {
+  assert.notEqual(document.gid, undefined)
+  assert.equal(window.gid, undefined)
+
+  var newEvent = document.createEvent('Event');
+  assert.equal(newEvent.gid, undefined);
+
+  var comment = document.createComment('comment');
+  assert.equal(newEvent.gid, undefined);
+
+  var newDiv1 = document.createElement("div"); 
+  var newDiv2 = document.createElement("div"); 
+
+  assert.isTrue(newDiv2.gid - newDiv1.gid === 1);
+});
+
+</script>
+
