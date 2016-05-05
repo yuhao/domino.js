@@ -1,15 +1,26 @@
 {
   "manifest_version": 2,
 
-  "name": "injectDIN",
-  "description": "This extension injects DIN",
+  "name": "DOM Instrumentor",
+  "description": "DIN Injection",
   "version": "1.0",
 
-  "permissions": ["<all_urls>"],
+  "incognito": "not_allowed",
+
+  "browser_action": {
+    "default_title": "DOM Instrumentor"
+  },
+
   "content_scripts": [
     {
-      "matches": ["http://*/*"],
-      "js": ["content-script.js"],
+      "matches": [
+        "http://cacm.acm.org/*"
+        //"http://www.cnn.com/*"
+        //"http://*/*"
+      ],
+      "js": [
+        "content-script.js"
+      ],
       "run_at": "document_start"
     }
   ]
