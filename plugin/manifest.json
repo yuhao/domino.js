@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+
+  "name": "injectDIN",
+  "description": "This extension injects DIN",
+  "version": "1.0",
+
+  "permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
