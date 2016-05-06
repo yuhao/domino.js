@@ -7,12 +7,13 @@ din.exportTo("win", function(){
   function instrumentWindowProp() {
     var getterOfProp, setterOfProp, writableOfProp;
 
-    // Three notes:
     // 1) We only instrument the property of window itself.
 	// 2) Because of 1, we create proxy for each window prop instead of
 	// overwriting its getter and setter (as we do for window.document) to avoid
 	// infinite loops.
-    // 3) Because of 2, we will miss any prop that is neither an object or a
+    // 3) Because of 2, we can only instrument properties that can be
+    // overwritten. Luckily all windows props except document are like that.
+    // 4) Again due to 2, we will miss any prop that is neither an object or a
     // function (luckily all window props as of now are either obj or func).
     var props = Object.keys(window);
     for (var i = 0; i < props.length; i++) {
