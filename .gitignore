@@ -3,3 +3,4 @@ app.html
 notes.js
 din.html
 plugin/content-script.js
+plugin/manifest.json

@@ -14,9 +14,7 @@
   "content_scripts": [
     {
       "matches": [
-        "http://cacm.acm.org/*"
-        //"http://www.cnn.com/*"
-        //"http://*/*"
+        "http://*/*"
       ],
       "js": [
         "content-script.js"
