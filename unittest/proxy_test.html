@@ -147,5 +147,11 @@ test('enumeratableProxy', function () {
   foo(testObj);
 });
 
+test('createProxyForIFrameWindow', function () {
+  var frame = document.getElementById("testiframe");
+  // This should not throw an cross-origin scripting exception
+  var iframeWindow = frame.contentWindow;
+});
+
 </script>
 

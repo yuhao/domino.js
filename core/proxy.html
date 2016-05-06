@@ -27,7 +27,12 @@ din.exportTo("proxy", function(){
             // technically a proxy object shouldn't have a _proxy property!
             return target[name];
           } else {
-            return createObjProxy(target[name]);
+            // Do not create proxy for iframe's window because that will lead to
+            // same-origin security policy violation.
+            if (target.tagName === "IFRAME" && name === "contentWindow")
+              return target[name];
+            else
+              return createObjProxy(target[name]);
           }
         } else if (typeof target[name] === "function") {
           if (name === "hasOwnProperty") {
