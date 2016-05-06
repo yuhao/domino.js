@@ -7,7 +7,14 @@ din.exportTo("evt", function(){
       // |callback| implements the EventListener interface whose arguments[0]
       // will be a vanilla Event object that dispatchEvent passes in. We take
       // the proxy of arguments[0] to let the callback use it.
-      arguments[0] = arguments[0]._proxy;
+
+      var currentEvent = arguments[0];
+      if (currentEvent.hasOwnProperty("_proxy")) {
+        arguments[0] = currentEvent._proxy;
+      } else {
+        arguments[0] = din.proxy.createObjProxy(currentEvent);
+      }
+
       callback.apply(this, arguments);
     }
   }
