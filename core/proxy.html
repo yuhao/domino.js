@@ -5,6 +5,19 @@
 'use strict';
 
 din.exportTo("proxy", function(){
+  function shouldCreateObjProxy(target, name) {
+    // Do not create proxy for iframe's window because that will lead to
+    // same-origin security policy violation.
+    var isMessageEventSource =
+        target.constructor === MessageEvent && name === "source";
+    var isIFrameContentWindow =
+        target.constructor === HTMLIFrameElement && name === "contentWindow";
+    if (isMessageEventSource || isIFrameContentWindow)
+      return false;
+
+    return true;
+  }
+
   var objHandler = {
     get: function(target, name){
       din.inspect.objGet(target, name);
@@ -27,12 +40,10 @@ din.exportTo("proxy", function(){
             // technically a proxy object shouldn't have a _proxy property!
             return target[name];
           } else {
-            // Do not create proxy for iframe's window because that will lead to
-            // same-origin security policy violation.
-            if (target.tagName === "IFRAME" && name === "contentWindow")
-              return target[name];
-            else
+            if (shouldCreateObjProxy(target, name))
               return createObjProxy(target[name]);
+            else
+              return target[name];
           }
         } else if (typeof target[name] === "function") {
           if (name === "hasOwnProperty") {
