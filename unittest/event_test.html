@@ -1,0 +1,28 @@
+<script type="text/javascript">
+'use strict';
+
+test('addEventListener', function () {
+  var value = 0;
+
+  var el = document.getElementById("test");
+  var evt = document.createEvent('CustomEvent');
+  evt.initCustomEvent('testevent', true, true, {});
+   
+  el.addEventListener('testevent', function bar(currentEvent) {
+    var evt2 = document.createEvent('CustomEvent');
+    evt2.initCustomEvent('testevent2', true, true, {});
+    currentEvent.target.addEventListener('testevent2', function(){
+      value++;
+    });
+
+    currentEvent.target.dispatchEvent(evt2);
+    value++;
+  }, false);
+
+  el.dispatchEvent(evt);
+
+  assert.equal(value, 2);
+});
+
+</script>
+

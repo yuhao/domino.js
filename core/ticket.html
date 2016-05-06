@@ -1,11 +1,14 @@
 <link rel="import" href="base.html">
-<link rel="import" href="document.html">
+<link rel="import" href="eventtarget.html">
 <link rel="import" href="window.html">
+<link rel="import" href="document.html">
 
 <script>
 'use strict';
 
 din.init();
+
+din.evt.instrumentEventTarget();
 
 din.doc.instrumentDocumentProp();
 

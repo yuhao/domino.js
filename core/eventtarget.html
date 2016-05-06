@@ -1,0 +1,31 @@
+<script>
+'use strict';
+
+din.exportTo("evt", function(){
+  function genCallback(callback) {
+    return function() {
+      // |callback| implements the EventListener interface whose arguments[0]
+      // will be a vanilla Event object that dispatchEvent passes in. We take
+      // the proxy of arguments[0] to let the callback use it.
+      arguments[0] = arguments[0]._proxy;
+      callback.apply(this, arguments);
+    }
+  }
+  
+  function instrumentEventTarget() {
+    var _addEventListener = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function() {
+      // addEventListener mandates that arguments[1] must be a callback that
+      // implements the EventListener interface.
+      var callback = arguments[1];
+      var _callback = genCallback(callback);
+      arguments[1] = _callback;
+      _addEventListener.apply(this, arguments);
+    }
+  }
+
+  return {
+    instrumentEventTarget: instrumentEventTarget
+  }
+});
+</script>
