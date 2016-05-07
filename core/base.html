@@ -16,19 +16,17 @@ this.din = (function(){
   }
 
   function init() {
-    Object.defineProperty(Node.prototype, "_gid", {
-      configurable: false,
-      enumerable: false,
-      value: undefined,
-      writable: true
-    });
-
     Object.defineProperty(Node.prototype, "gid", {
       configurable: false,
       enumerable: false,
       get: function() {
         if (this._gid === undefined) {
-          this._gid = gid++;
+          Object.defineProperty(this, "_gid", {
+            configurable: false,
+            enumerable: false,
+            value: gid++,
+            writable: true
+          });
         }
         return this._gid;
       }

@@ -13,8 +13,12 @@ test('defineNodeGID', function () {
 
   var newDiv1 = document.createElement("div"); 
   var newDiv2 = document.createElement("div"); 
-
   assert.isTrue(newDiv2.gid - newDiv1.gid === 1);
+
+  assert.isFalse(newDiv1.propertyIsEnumerable("gid"));
+  assert.isFalse(newDiv1.propertyIsEnumerable("_gid"));
+  assert.isFalse(newDiv2.propertyIsEnumerable("gid"));
+  assert.isFalse(newDiv2.propertyIsEnumerable("_gid"));
 });
 
 </script>
