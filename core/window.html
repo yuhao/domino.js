@@ -19,8 +19,6 @@ din.exportTo("win", function(){
     for (var i = 0; i < props.length; i++) {
       var prop = props[i];
 
-      // Shall we skip them? Doesn't seem harmful to create a proxy for window.
-      // Ths includes: parent, top, frames, self, window, global(DIN-induced).
       if (prop === "din" ||     // No need to create a proxy for DIN itself
           prop === "console" || // This would lead to an infinite loop
           prop === "global" ||  // No need to wrap DIN related prop
