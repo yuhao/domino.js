@@ -23,14 +23,12 @@ test('setTimeout', function () {
 
 test('frames', function () {
   var thisFrame = window.frames;
-
-  assert.equal(thisFrame._src, window);
+  assert.isFalse(din.util.isOrHasProxy(thisFrame));
 });
 
 test('self', function () {
   var selfWindow = window.self;
-
-  assert.equal(selfWindow._src, window);
+  assert.isFalse(din.util.isOrHasProxy(selfWindow));
 });
 
 </script>
