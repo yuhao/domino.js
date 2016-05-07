@@ -147,6 +147,11 @@ din.exportTo("proxy", function(){
     if (func === null || typeof func !== "function")
       return func;
 
+    // TODO: revisit this with a more elegant solution.
+    // Quick fix for: https://github.com/yuhao/ticket.js/issues/17
+    if (func.constructor === HTMLObjectElement)
+      return func;
+
     if (func.hasOwnProperty("_proxy"))
       return func._proxy;
 
