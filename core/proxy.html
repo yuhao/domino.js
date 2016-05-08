@@ -5,7 +5,7 @@
 'use strict';
 
 din.exportTo("proxy", function(){
-  function shouldCreateObjProxy(target, name) {
+  function isIFrameWindow(target, name) {
     // Do not create proxy for iframe's window because that will lead to
     // same-origin security policy violation.
     var isMessageEventSource =
@@ -13,6 +13,22 @@ din.exportTo("proxy", function(){
     var isIFrameContentWindow =
         target.constructor === HTMLIFrameElement && name === "contentWindow";
     if (isMessageEventSource || isIFrameContentWindow)
+      return true;
+
+    return false;
+  }
+
+  function shouldCreateObjProxy(obj) {
+    if (obj === null || typeof obj !== "object")
+      return false;
+
+    // Skip objects that are instances of Window. Creating a proxy for a window
+    // object might lead to same-origin security policy violation later because
+    // it could be used to aceess an iframe's window (e.g., window.frames[0]).
+    if (obj.constructor === Window)
+      return false;
+
+    if (obj.constructor === HTMLDocument)
       return false;
 
     return true;
@@ -40,7 +56,7 @@ din.exportTo("proxy", function(){
             // technically a proxy object shouldn't have a _proxy property!
             return target[name];
           } else {
-            if (shouldCreateObjProxy(target, name))
+            if (!isIFrameWindow(target, name))
               return createObjProxy(target[name]);
             else
               return target[name];
@@ -115,13 +131,7 @@ din.exportTo("proxy", function(){
   // TODO: Also it is not possible to create a proxy of a proxy object (good?).
   // https://github.com/yuhao/ticket.js/issues/9
   function createObjProxy(node) {
-    if (node === null || typeof node !== "object")
-      return node;
-
-    // Skip objects that are instances of Window. Creating a proxy for a window
-    // object might lead to same-origin security policy violation later because
-    // it could be used to aceess an iframe's window (e.g., window.frames[0]).
-    if (node.constructor === Window)
+    if (!shouldCreateObjProxy(node))
       return node;
 
     if (node.hasOwnProperty("_proxy"))
