@@ -1,0 +1,36 @@
+{
+  "name": "DIN",
+  "version": "0.0.1",
+  "description": "DOM Instrumentor.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "prestart": "migroose",
+    "migrate": "migroose"
+  },
+  "engine": {
+    "node": "0.10.x",
+    "npm": "2.1.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuhao/ticket.js"
+  },
+  "author": {
+    "name": "Yuhao Zhu",
+    "email": "yzhu@utexas.edu"
+  },
+  "keywords": [
+    "DOM"
+  ],
+  "bugs": {
+    "url": "https://github.com/yuhao/ticket.js/issues"
+  },
+  "homepage": "http://www.yuhaozhu.com",
+  "dependencies": {
+    "cors": "~2.7.1",
+    "express": "~4.10.2",
+    "mongoose": "~3.8.22"
+  }
+}

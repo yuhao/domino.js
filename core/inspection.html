@@ -18,6 +18,15 @@ din.exportTo("inspect", function(){
         "return",
         returnVal instanceof Node ? returnVal.tagName : "",
         returnVal instanceof Node ? returnVal.gid : "");
+
+    if (returnVal instanceof Node) {
+      var xhttp = new XMLHttpRequest();
+      var url = "http://localhost:3000/api/operation?node="
+          + returnVal.gid + "&op=" + target.name
+      xhttp.open("GET", url);
+      xhttp.send();
+      console.log(url);
+    }
   }
 
   function objGet(target, name) {

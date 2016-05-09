@@ -4,3 +4,5 @@ notes.js
 din.html
 plugin/content-script.js
 plugin/manifest.json
+*.log
+node_modules/
