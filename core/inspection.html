@@ -9,7 +9,7 @@ din.exportTo("inspect", function(){
   }
 
   function funcExit(target, thisArg, argumentsList, returnVal) {
-    din.util.predLog(true,
+    din.util.predLog(false,
         (thisArg === undefined) ? "undefined" : thisArg.constructor.name,
         "(",
         thisArg instanceof Node ? thisArg.gid : "undefined",
@@ -28,11 +28,11 @@ din.exportTo("inspect", function(){
   }
 
   function objGet(target, name) {
-    din.util.predLog(false, "[Proxy] Read", name, typeof target[name]);
+    din.util.predLog(false, "[Proxy] Read", name, Object.toType(target[name]));
   }
 
   function objSet(target, name, val) {
-    din.util.predLog(false, "[Proxy] Write", name, typeof target[name]);
+    din.util.predLog(false, "[Proxy] Write", name, Object.toType(target[name]));
   }
 
   return {

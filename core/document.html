@@ -12,9 +12,9 @@ din.exportTo("doc", function(){
       din.util.predLog(false, "[Getter] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = originalGetter.apply(window.document);
 
-      if (typeof value === "object")
+      if (Object.toType(value) === "object")
         return din.proxy.createObjProxy(value)
-      else if (typeof value === "function")
+      else if (Object.toType(value) === "function")
         return din.proxy.createFuncProxy(value)
 
       return value;
@@ -40,9 +40,9 @@ din.exportTo("doc", function(){
       din.util.predLog(false, "[Value] Read window.document." + prop + ". Originally owned by " + ownerOfProp.constructor.name);
       var value = Object.getOwnPropertyDescriptor(ownerOfProp, prop).value;
 
-      if (typeof value === "object")
+      if (Object.toType(value) === "object")
         return din.proxy.createObjProxy(value)
-      else if (typeof value === "function")
+      else if (Object.toType(value) === "function")
         return din.proxy.createFuncProxy(value)
 
       return value;

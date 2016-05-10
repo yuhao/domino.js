@@ -31,6 +31,13 @@ this.din = (function(){
         return this._gid;
       }
     });
+
+    Object.toType = function(obj) {
+      if (obj instanceof HTMLObjectElement)
+        return "object";
+
+      return typeof obj;
+    }
   }
 
   return {

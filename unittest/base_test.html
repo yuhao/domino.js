@@ -21,5 +21,12 @@ test('defineNodeGID', function () {
   assert.isFalse(newDiv2.propertyIsEnumerable("_gid"));
 });
 
+test('toTypeHTMLObjectElement', function () {
+  var obj = document.createElement("object");
+  obj.setAttribute("type", "application/x-shockwave-flash");
+
+  assert.equal(obj.getAttribute("type"), "application/x-shockwave-flash");
+});
+
 </script>
 

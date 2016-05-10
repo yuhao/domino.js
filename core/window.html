@@ -33,9 +33,9 @@ din.exportTo("win", function(){
       if ((getterOfProp === undefined && writableOfProp === true) ||
           (getterOfProp !== undefined && setterOfProp !== undefined)) {
         var shadowProp = window[prop];
-        if (typeof shadowProp === "function")
+        if (Object.toType(shadowProp) === "function")
           window[prop] = din.proxy.createFuncProxy(shadowProp);
-        else if (typeof shadowProp === "object")
+        else if (Object.toType(shadowProp) === "object")
           window[prop] = din.proxy.createObjProxy(shadowProp);
       }
     }

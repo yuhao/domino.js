@@ -19,7 +19,10 @@ din.exportTo("proxy", function(){
   }
 
   function shouldCreateObjProxy(obj) {
-    if (obj === null || typeof obj !== "object")
+    if (obj === null)
+      return false;
+
+    if (Object.toType(obj) !== "object")
       return false;
 
     // Skip objects that are instances of Window. Creating a proxy for a window
@@ -41,7 +44,7 @@ din.exportTo("proxy", function(){
       if (target[name] === null) {
         return null;
       } else {
-        if (typeof target[name] === "object") {
+        if (Object.toType(target[name]) === "object") {
           if (name === "_src") {
             // If we are accessing obj_proxy._src, we want obj,
             // not obj_proxy._src._proxy which is obj_proxy itself!
@@ -61,7 +64,7 @@ din.exportTo("proxy", function(){
             else
               return target[name];
           }
-        } else if (typeof target[name] === "function") {
+        } else if (Object.toType(target[name]) === "function") {
           if (name === "hasOwnProperty") {
             // Do not create a proxy for |hasOwnProperty|, otherwise there is
             // an infinite loop when calling |hasOwnProperty| from the
@@ -94,7 +97,8 @@ din.exportTo("proxy", function(){
       // Change the proxy argument to its _src
       var numArgs = argumentsList.length;
       for (var i = 0;i < numArgs;i++) {
-        if (typeof argumentsList[i] === "object" && din.util.isOrHasProxy(argumentsList[i]))
+        if (Object.toType(argumentsList[i]) === "object" &&
+            din.util.isOrHasProxy(argumentsList[i]))
           argumentsList[i] = argumentsList[i]._src;
       }
 
@@ -114,9 +118,9 @@ din.exportTo("proxy", function(){
 
       din.inspect.funcExit(target, thisArg, argumentsList, returnVal);
 
-      if (typeof returnVal === "object") {
+      if (Object.toType(returnVal) === "object") {
         returnVal = createObjProxy(returnVal);
-      } else if (typeof returnVal === "function") {
+      } else if (Object.toType(returnVal) === "function") {
         returnVal = createFuncProxy(returnVal);
       }
 
@@ -160,12 +164,7 @@ din.exportTo("proxy", function(){
   }
 
   function createFuncProxy(func) {
-    if (func === null || typeof func !== "function")
-      return func;
-
-    // TODO: revisit this with a more elegant solution.
-    // Quick fix for: https://github.com/yuhao/ticket.js/issues/17
-    if (func.constructor === HTMLObjectElement)
+    if (func === null || Object.toType(func) !== "function")
       return func;
 
     if (func.hasOwnProperty("_proxy"))
