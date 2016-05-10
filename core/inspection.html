@@ -22,7 +22,7 @@ din.exportTo("inspect", function(){
 
     if (thisArg instanceof Node) {
       var record = new din.profile.OpLog(thisArg.gid, target.name);
-      din.profile.predAdd(true, record);
+      din.profile.predAdd(false, record);
       din.profile.tryPost();
     }
   }
