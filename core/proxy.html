@@ -19,9 +19,6 @@ din.exportTo("proxy", function(){
   }
 
   function shouldCreateObjProxy(obj) {
-    if (obj === null)
-      return false;
-
     if (Object.toType(obj) !== "object")
       return false;
 
@@ -41,41 +38,37 @@ din.exportTo("proxy", function(){
     get: function(target, name){
       din.inspect.objGet(target, name);
 
-      if (target[name] === null) {
-        return null;
-      } else {
-        if (Object.toType(target[name]) === "object") {
-          if (name === "_src") {
-            // If we are accessing obj_proxy._src, we want obj,
-            // not obj_proxy._src._proxy which is obj_proxy itself!
-            return target;
-          }
-          else if (name === "_proxy") {
-            // obj_proxy._proxy shouldn't return obj._proxy._proxy which is
-            // obj_proxy._proxy, and then we have an infinite loop! We print
-            // a warning and return obj._proxy to prevent the infinite loop.
-            // This can only happen when we are checking isOrHasProxy of
-            // obj_proxy. Otherwise, it shouldn't neven happen because
-            // technically a proxy object shouldn't have a _proxy property!
-            return target[name];
-          } else {
-            if (!isIFrameWindow(target, name))
-              return createObjProxy(target[name]);
-            else
-              return target[name];
-          }
-        } else if (Object.toType(target[name]) === "function") {
-          if (name === "hasOwnProperty") {
-            // Do not create a proxy for |hasOwnProperty|, otherwise there is
-            // an infinite loop when calling |hasOwnProperty| from the
-            // |hasOwnProperty| proxy (see |apply| in funcHandler).
-            return target[name];
-          } else {
-            return createFuncProxy(target[name]);
-          }
-        } else {
-          return target[name];
+      if (Object.toType(target[name]) === "object") {
+        if (name === "_src") {
+          // If we are accessing obj_proxy._src, we want obj,
+          // not obj_proxy._src._proxy which is obj_proxy itself!
+          return target;
         }
+        else if (name === "_proxy") {
+          // obj_proxy._proxy shouldn't return obj._proxy._proxy which is
+          // obj_proxy._proxy, and then we have an infinite loop! We print
+          // a warning and return obj._proxy to prevent the infinite loop.
+          // This can only happen when we are checking isOrHasProxy of
+          // obj_proxy. Otherwise, it shouldn't neven happen because
+          // technically a proxy object shouldn't have a _proxy property!
+          return target[name];
+        } else {
+          if (!isIFrameWindow(target, name))
+            return createObjProxy(target[name]);
+          else
+            return target[name];
+        }
+      } else if (Object.toType(target[name]) === "function") {
+        if (name === "hasOwnProperty") {
+          // Do not create a proxy for |hasOwnProperty|, otherwise there is
+          // an infinite loop when calling |hasOwnProperty| from the
+          // |hasOwnProperty| proxy (see |apply| in funcHandler).
+          return target[name];
+        } else {
+          return createFuncProxy(target[name]);
+        }
+      } else {
+        return target[name];
       }
     },
 
@@ -164,7 +157,7 @@ din.exportTo("proxy", function(){
   }
 
   function createFuncProxy(func) {
-    if (func === null || Object.toType(func) !== "function")
+    if (Object.toType(func) !== "function")
       return func;
 
     if (func.hasOwnProperty("_proxy"))

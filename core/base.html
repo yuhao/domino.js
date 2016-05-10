@@ -36,6 +36,9 @@ this.din = (function(){
       if (obj instanceof HTMLObjectElement)
         return "object";
 
+      if (obj === null)
+        return "null";
+
       return typeof obj;
     }
   }
