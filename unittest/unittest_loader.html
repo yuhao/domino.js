@@ -5,7 +5,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="/ticket.js/third_party/chai.js"></script>
 <body>
-  <h1 id="test">Unittest</h1>
+  <h1 id="test">Unittest <span id="summary"></span></h1>
   <div id="dashboard">
   </div>
   <iframe src="http://www.w3schools.com" id="testiframe" style="visibility: hidden; height: 0px"></iframe>
@@ -13,10 +13,12 @@
 
 <script>
   var assert = chai.assert;
-  var unittest_suite = [];
+  var unittest_suite = {};
+  var unittest_results = [];
 
   function test(name, func) {
     unittest_suite[name] = func;
+    unittest_results[name] = false;
   }
 </script>
 
@@ -33,14 +35,21 @@
   var testName, currentTest, result;
   var unittests = Object.keys(unittest_suite);
   var dashboard = document.getElementById("dashboard");
+  var summary = document.getElementById("summary");
   var div, link, span, text;
+  var numPassed = 0;
+  var totTests = unittests.length;
 
-  function tryOneTest(currentTest) {
+  function tryOneTest(currentTest, name) {
     var start = new Date();
     var success;
     try {
       currentTest();
       success = true;
+      if (unittest_results[name] !== true) {
+        unittest_results[name] = true;
+        numPassed++;
+      }
     }
     catch (e) {
       console.log(e)
@@ -51,9 +60,9 @@
     return {success: success, duration: end - start};
   }
 
-  function linkOnclick(testFunc, span, text) {
+  function linkOnclick(testFunc, span, text, name) {
     return function() {
-      var result = tryOneTest(testFunc);
+      var result = tryOneTest(testFunc, name);
       var success = result.success;
       var duration = result.duration;
       span.style.color = (success === true) ? "darkgreen" : "red";
@@ -61,11 +70,15 @@
     }
   }
 
+  function updateSummary() {
+    summary.innerHTML = "(" + numPassed + "/" + totTests + ")";
+  }
+
   for (var i = 0; i < unittests.length; i++) {
     testName = unittests[i];
     currentTest = unittest_suite[testName];
 
-    result = tryOneTest(currentTest);
+    result = tryOneTest(currentTest, testName);
     duration = result.duration;
     success = result.success;
 
@@ -77,7 +90,7 @@
     text.nodeValue = (success === true) ? " Passed" + " (" + duration.toString() + " ms)" : " Failed" + " (" + duration.toString() + " ms)";
     link.href = "javascript:void(0);";
     link.text = testName;
-    link.onclick = linkOnclick(currentTest, span, text);
+    link.onclick = linkOnclick(currentTest, span, text, testName);
 
     span.style.fontWeight = "bold"
     span.style.color = (success === true) ? "darkgreen" : "red";
@@ -90,6 +103,8 @@
     span.appendChild(text);
     dashboard.appendChild(div);
   }
+
+  updateSummary();
 </script>
 
 </html>
