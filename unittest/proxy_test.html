@@ -153,5 +153,14 @@ test('createProxyForIFrameWindow', function () {
   var iframeWindow = frame.contentWindow;
 });
 
+test('doNOTCreateProxyForDOMStringMap', function () {
+  var el = document.getElementById("test");
+  el.dataset.num = 15;
+  assert.equal(el.dataset.num, 15)
+
+  el.setAttribute("team", "arsenal")
+  assert.equal(el.getAttribute("team"), "arsenal");
+});
+
 </script>
 

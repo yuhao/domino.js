@@ -31,6 +31,10 @@ din.exportTo("proxy", function(){
     if (obj.constructor === HTMLDocument)
       return false;
 
+    // Fix for: https://github.com/yuhao/ticket.js/issues/21
+    if (obj.constructor === DOMStringMap)
+      return false;
+
     return true;
   }
 
@@ -140,14 +144,14 @@ din.exportTo("proxy", function(){
     // Install cross-references between src and proxy
     // Note that both the src and proxy will have both cross-references!
     Object.defineProperty(node, "_proxy", {
-      configurable: true,
+      configurable: false,
       enumerable: false, // This is vital to avoid infinite loops!
       value: node_proxy,
       writable: true
     })
 
     Object.defineProperty(node_proxy, "_src", {
-      configurable: true,
+      configurable: false,
       enumerable: false, // This is vital to avoid infinite loops!
       value: node,
       writable: true
