@@ -1,0 +1,42 @@
+<script>
+'use strict';
+
+din.exportTo("profile", function(){
+  var DOMLog = {};
+
+  function OpLog (id, op) {
+    this.id = id;
+    this.op = op;
+  }
+
+  function predAdd(cond, record) {
+    if (cond)
+      DOMLog[Date.now()] = record;
+  }
+
+  function tryPost() {
+    if (shouldPost()) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://146.6.28.88:3000/api/operation");
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.send(JSON.stringify(DOMLog));
+      xhr.addEventListener("load", function() {
+        din.util.predLog(true, "Sent");
+      });
+      DOMLog = {};
+    }
+  }
+
+  function shouldPost() {
+    return Object.keys(DOMLog).length % 100 === 0;
+  }
+
+  return {
+    OpLog: OpLog,
+    shouldPost: shouldPost,
+    predAdd: predAdd,
+    tryPost: tryPost
+  }
+});
+
+</script>

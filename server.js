@@ -1,9 +1,12 @@
 var mongoose = require('mongoose');
 var express = require('express');
 var cors = require('cors');
+var bodyParser = require('body-parser');
+
 var app = express();
 
 app.use(cors());
+app.use(bodyParser.json());
 
 var server = app.listen(3000, function(){
   console.log("We have started our server on port 3000");
@@ -28,10 +31,7 @@ app.get('/', function (req, res) {
   res.send();
 });
 
-app.get('/api/operation', function (req, res) {
-  var nodeId = parseInt(req.query.node);
-  var operationName = req.query.op;
-
+function saveNewOp(nodeId, operationName) {
   var newOp = new DOMOp({
     node: nodeId,
     operation: operationName
@@ -43,6 +43,18 @@ app.get('/api/operation', function (req, res) {
   
     console.log("saved", item);
   });
+}
+
+app.post('/api/operation', function(req, res) {
+  var keys = Object.keys(req.body);
+  for (var i = 0; i < keys.length; i++) {
+    //var timestamp = keys[i];
+    var record = req.body[keys[i]];
+    var node = record.id;
+    var operation = record.op;
+
+    saveNewOp(node, operation);
+  }
 
   res.send();
 });
@@ -53,18 +65,3 @@ app.get('/about', function (req, res) {
   res.send();
 });
 
-/*
-//DOMOp.find({ node: '2' }, function(err, item) {
-DOMOp.find({}, function(err, item) {
-  if (err)
-    throw err;
-
-  console.log("found", item);
-  for (var i = 0; i < item.length; i++) {
-    item[i].remove(function(err) {
-      if (err) throw err;
-      console.log("deleted!");
-    });
-  }
-});
-*/

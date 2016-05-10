@@ -29,6 +29,7 @@
   },
   "homepage": "http://www.yuhaozhu.com",
   "dependencies": {
+    "body-parser": "^1.15.1",
     "cors": "~2.7.1",
     "express": "~4.10.2",
     "mongoose": "~3.8.22"

@@ -1,4 +1,5 @@
 <link rel="import" href="util.html">
+<link rel="import" href="profile.html">
 
 <script>
 'use strict';
@@ -8,7 +9,7 @@ din.exportTo("inspect", function(){
   }
 
   function funcExit(target, thisArg, argumentsList, returnVal) {
-    din.util.predLog(false,
+    din.util.predLog(true,
         (thisArg === undefined) ? "undefined" : thisArg.constructor.name,
         "(",
         thisArg instanceof Node ? thisArg.gid : "undefined",
@@ -19,13 +20,10 @@ din.exportTo("inspect", function(){
         returnVal instanceof Node ? returnVal.tagName : "",
         returnVal instanceof Node ? returnVal.gid : "");
 
-    if (returnVal instanceof Node) {
-      var xhttp = new XMLHttpRequest();
-      var url = "http://localhost:3000/api/operation?node="
-          + returnVal.gid + "&op=" + target.name
-      xhttp.open("GET", url);
-      xhttp.send();
-      console.log(url);
+    if (thisArg instanceof Node) {
+      var record = new din.profile.OpLog(thisArg.gid, target.name);
+      din.profile.predAdd(true, record);
+      din.profile.tryPost();
     }
   }
 
