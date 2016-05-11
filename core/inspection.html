@@ -35,11 +35,20 @@ din.exportTo("inspect", function(){
     din.util.predLog(false, "[Proxy] Write", name, Object.toType(target[name]));
   }
 
+  function callbackEntry(triggeringEvent, callback) {
+    din.util.predLog(true, "Event", triggeringEvent.type, "Callback", callback.name);
+  }
+
+  function callbackExit() {
+  }
+
   return {
     funcEntry: funcEntry,
     funcExit: funcExit,
     objGet: objGet,
-    objSet: objSet
+    objSet: objSet,
+    callbackEntry: callbackEntry,
+    callbackExit: callbackExit
   }
 });
 </script>
