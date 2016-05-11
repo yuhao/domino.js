@@ -28,7 +28,7 @@ din.exportTo("profile", function(){
   }
 
   function shouldPost() {
-    return Object.keys(DOMLog).length % 10000 === 1;
+    return Object.keys(DOMLog).length === 10000;
   }
 
   return {
