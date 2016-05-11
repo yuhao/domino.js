@@ -22,10 +22,10 @@ din.exportTo("evt", function(){
       din.inspect.callbackExit(currentEvent, callback);
     }
   }
-  
+
   function instrumentEventTarget() {
     var _addEventListener = EventTarget.prototype.addEventListener;
-    EventTarget.prototype.addEventListener = function() {
+    EventTarget.prototype.addEventListener = function addEventListener() {
       // addEventListener mandates that arguments[1] must be a callback that
       // implements the EventListener interface.
       var callback = arguments[1];
