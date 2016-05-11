@@ -36,7 +36,7 @@ din.exportTo("inspect", function(){
   }
 
   function callbackEntry(triggeringEvent, callback) {
-    din.util.predLog(true, "Event", triggeringEvent.type, "Callback", callback.name);
+    din.util.predLog(false, "Event", triggeringEvent.type, "Callback", callback.name);
   }
 
   function callbackExit() {

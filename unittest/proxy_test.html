@@ -155,6 +155,8 @@ test('createProxyForIFrameWindow', function () {
 
 test('doNOTCreateProxyForDOMStringMap', function () {
   var el = document.getElementById("test");
+  assert.isFalse(din.util.isOrHasProxy(el.dataset));
+
   el.dataset.num = 15;
   assert.equal(el.dataset.num, 15)
 
