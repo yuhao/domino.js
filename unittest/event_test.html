@@ -24,5 +24,55 @@ test('addEventListener', function () {
   assert.equal(value, 2);
 });
 
+test('removeEventListener', function () {
+  var value = 0;
+  var testObj = {
+    func: function() {
+      value = 1;
+    }
+  }
+
+  var evt = document.createEvent('UIEvent');
+  evt.initUIEvent("click", true, true, window, 1);
+
+  document.addEventListener("click", testObj.func);
+  document.dispatchEvent(evt);
+  assert.equal(value, 1);
+
+  document.removeEventListener("click", testObj.func);
+  value = 0;
+  document.dispatchEvent(evt);
+  assert.equal(value, 0);
+
+  window.addEventListener("click", testObj.func);
+  window.dispatchEvent(evt);
+  assert.equal(value, 1);
+
+  window.removeEventListener("click", testObj.func);
+  value = 0;
+  window.dispatchEvent(evt);
+  assert.equal(value, 0);
+
+  testObj = din.proxy.createObjProxy(testObj);
+
+  document.addEventListener("click", testObj.func);
+  document.dispatchEvent(evt);
+  assert.equal(value, 1);
+
+  document.removeEventListener("click", testObj.func);
+  value = 0;
+  document.dispatchEvent(evt);
+  assert.equal(value, 0);
+
+  window.addEventListener("click", testObj.func);
+  window.dispatchEvent(evt);
+  assert.equal(value, 1);
+
+  window.removeEventListener("click", testObj.func);
+  value = 0;
+  window.dispatchEvent(evt);
+  assert.equal(value, 0);
+});
+
 </script>
 

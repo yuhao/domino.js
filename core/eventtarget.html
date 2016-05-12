@@ -28,10 +28,26 @@ din.exportTo("evt", function(){
     EventTarget.prototype.addEventListener = function addEventListener() {
       // addEventListener mandates that arguments[1] must be a callback that
       // implements the EventListener interface.
-      var callback = arguments[1];
-      var _callback = genCallback(callback);
-      arguments[1] = _callback;
+      var originalCallback = arguments[1];
+      var actualCallback = genCallback(originalCallback);
+      originalCallback._actualCb = actualCallback;
+      arguments[1] = actualCallback;
       _addEventListener.apply(this, arguments);
+    }
+
+    var _dispatchEvent = EventTarget.prototype.dispatchEvent;
+    EventTarget.prototype.dispatchEvent = function dispatchEvent() {
+      if (arguments[0].hasOwnProperty("_proxy"))
+        arguments[0] = arguments[0]._src;
+      _dispatchEvent.apply(this, arguments);
+    }
+
+    var _removeEventListener = EventTarget.prototype.removeEventListener;
+    EventTarget.prototype.removeEventListener = function removeEventListener() {
+      var callback = arguments[1];
+      if (callback.hasOwnProperty("_actualCb"))
+        arguments[1] = callback._actualCb;
+      _removeEventListener.apply(this, arguments);
     }
   }
 
