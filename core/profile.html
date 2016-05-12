@@ -23,7 +23,11 @@ din.exportTo("profile", function(){
       xhr.addEventListener("load", function() {
         din.util.predLog(true, "Sent");
       });
-      DOMLog = {};
+
+      var records = Object.keys(DOMLog);
+      for (var i = 0; i < records.length; i++) {
+        delete DOMLog[records[i]];
+      }
     }
   }
 
