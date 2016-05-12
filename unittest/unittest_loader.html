@@ -33,7 +33,7 @@
 <script id="test_runner">
   var duration, success;
   var testName, currentTest, result;
-  var unittests = Object.keys(unittest_suite);
+  var unittests = Object.keys(unittest_suite).sort();
   var dashboard = document.getElementById("dashboard");
   var summary = document.getElementById("summary");
   var div, link, span, text;
