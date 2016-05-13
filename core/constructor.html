@@ -1,0 +1,26 @@
+<link rel="import" href="proxy.html">
+
+<script>
+'use strict';
+
+din.exportTo("cst", function(){
+  function instrumentMutationObserver() {
+    var _observe = MutationObserver.prototype.observe;
+    MutationObserver.prototype.observe = function observe() {
+      var target = arguments[0];
+      if (target.hasOwnProperty("_proxy"))
+        arguments[0] = target._src;
+      _observe.apply(this, arguments);
+    }
+  }
+
+  function instrumentConstructor() {
+    instrumentMutationObserver();
+  }
+
+  return {
+    instrumentMutationObserver: instrumentMutationObserver,
+    instrumentConstructor: instrumentConstructor
+  }
+});
+</script>

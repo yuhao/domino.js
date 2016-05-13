@@ -1,0 +1,19 @@
+<script type="text/javascript">
+'use strict';
+ 
+test('mutationObserver', function () {
+  var body = document.getElementsByTagName("body")[0];
+
+  var observer = new MutationObserver(function(mutations) {
+    assert.isTrue(mutations.length > 0);
+  });
+  var config = { attributes: true, childList: true, characterData: true };
+  observer.observe(body, config);
+
+  var newDiv = document.createElement("div"); 
+  document.body.appendChild(newDiv); 
+
+  observer.disconnect();
+});
+
+</script>
