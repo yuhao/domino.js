@@ -13,7 +13,7 @@ din.exportTo("inspector", function(){
   }
 
   function shouldPost() {
-    return Object.keys(DOMLog).length === 10000;
+    return Object.keys(DOMLog).length === 10;
   }
 
   function funcEntry(target, thisArg, argumentsList) {
@@ -33,7 +33,7 @@ din.exportTo("inspector", function(){
 
     if (thisArg instanceof Node) {
       var record = new OpLog(thisArg.gid, target.name);
-      din.post.predAdd(false, DOMLog, Date.now(), record);
+      din.post.predAdd(true, DOMLog, Date.now(), record);
       din.post.tryPost(shouldPost(), DOMLog);
     }
   }
