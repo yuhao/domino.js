@@ -1,10 +1,21 @@
 <link rel="import" href="util.html">
-<link rel="import" href="profile.html">
+<link rel="import" href="post.html">
 
 <script>
 'use strict';
 
 din.exportTo("inspector", function(){
+  var DOMLog = {};
+
+  function OpLog (id, op) {
+    this.id = id;
+    this.op = op;
+  }
+
+  function shouldPost() {
+    return Object.keys(DOMLog).length === 10000;
+  }
+
   function funcEntry(target, thisArg, argumentsList) {
   }
 
@@ -21,9 +32,9 @@ din.exportTo("inspector", function(){
         returnVal instanceof Node ? returnVal.gid : "");
 
     if (thisArg instanceof Node) {
-      var record = new din.profile.OpLog(thisArg.gid, target.name);
-      din.profile.predAdd(false, record);
-      din.profile.tryPost();
+      var record = new OpLog(thisArg.gid, target.name);
+      din.post.predAdd(false, DOMLog, Date.now(), record);
+      din.post.tryPost(shouldPost(), DOMLog);
     }
   }
 
