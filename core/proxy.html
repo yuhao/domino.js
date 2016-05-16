@@ -31,7 +31,7 @@ din.exportTo("proxy", function(){
     if (obj.constructor === HTMLDocument)
       return false;
 
-    // Fix for: https://github.com/yuhao/ticket.js/issues/21
+    // Fix for: https://github.com/yuhao/domino.js/issues/21
     if (obj.constructor === DOMStringMap)
       return false;
 
@@ -126,11 +126,11 @@ din.exportTo("proxy", function(){
   };
 
   // TODO: maybe we want to consolidate obj and func proxy creation?
-  // https://github.com/yuhao/ticket.js/issues/5
+  // https://github.com/yuhao/domino.js/issues/5
   // createObjProxy makes sure that if an obj already has a proxy, that
   // existing proxy will be returned and NO new proxy will be created.
   // TODO: Also it is not possible to create a proxy of a proxy object (good?).
-  // https://github.com/yuhao/ticket.js/issues/9
+  // https://github.com/yuhao/domino.js/issues/9
   function createObjProxy(node) {
     if (!shouldCreateObjProxy(node))
       return node;

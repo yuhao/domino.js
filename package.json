@@ -1,7 +1,7 @@
 {
-  "name": "DIN",
+  "name": "DOMINO",
   "version": "0.0.1",
-  "description": "DOM Instrumentor.",
+  "description": "DOM Instrumentation and Optimization.",
   "private": true,
   "main": "server.js",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yuhao/ticket.js"
+    "url": "https://github.com/yuhao/domino.js"
   },
   "author": {
     "name": "Yuhao Zhu",
@@ -25,7 +25,7 @@
     "DOM"
   ],
   "bugs": {
-    "url": "https://github.com/yuhao/ticket.js/issues"
+    "url": "https://github.com/yuhao/domino.js/issues"
   },
   "homepage": "http://www.yuhaozhu.com",
   "dependencies": {

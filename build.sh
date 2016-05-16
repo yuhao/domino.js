@@ -1,4 +1,4 @@
-vulcanize -o din.html core/ticket.html
+vulcanize -o din.html core/main.html
 
 cat din.html | awk '
 {
