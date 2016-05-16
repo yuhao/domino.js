@@ -1,4 +1,4 @@
-<link rel="import" href="api.html">
+<link rel="import" href="inspect.html">
 
 <script>
 'use strict';
@@ -17,9 +17,9 @@ din.exportTo("evt", function(){
         arguments[0] = din.proxy.createObjProxy(currentEvent);
       }
 
-      din.api.callbackEntry(currentEvent, callback);
+      din.inspect.callbackEntry(currentEvent, callback);
       callback.apply(this, arguments);
-      din.api.callbackExit(currentEvent, callback);
+      din.inspect.callbackExit(currentEvent, callback);
     }
   }
 

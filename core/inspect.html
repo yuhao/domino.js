@@ -1,0 +1,67 @@
+<script>
+'use strict';
+
+din.exportTo("inspect", function(){
+  function instance(name) {
+    this.name = name;
+  }
+
+  instance.prototype = {
+    on: function(name, func) {
+      this[name] = func;
+    }
+  }
+
+  function funcEntry(target, thisArg, argumentsList) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.funcEntry) {
+      inspector.funcEntry.apply(this, arguments);
+    }
+  }
+
+  function funcExit(target, thisArg, argumentsList, returnVal) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.funcExit) {
+      inspector.funcExit.apply(this, arguments);
+    }
+  }
+
+  function objGet(target, name) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.objGet) {
+      inspector.objGet.apply(this, arguments);
+    }
+  }
+
+  function objSet(target, name, val) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.objSet) {
+      inspector.objSet.apply(this, arguments);
+    }
+  }
+
+  function callbackEntry(triggeringEvent, callback) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.callbackEntry) {
+      inspector.callbackEntry.apply(this, arguments);
+    }
+  }
+
+  function callbackExit(triggeringEvent, callback) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.callbackExit) {
+      inspector.callbackExit.apply(this, arguments);
+    }
+  }
+
+  return {
+    instance: instance,
+    funcEntry: funcEntry,
+    funcExit: funcExit,
+    objGet: objGet,
+    objSet: objSet,
+    callbackEntry: callbackEntry,
+    callbackExit: callbackExit
+  }
+});
+</script>

@@ -9,11 +9,23 @@ this.din = (function(){
     return global.din;
   }
 
-  var gid = 0;
-
   function exportTo(namespace, func) {
-    din[namespace] = func();
+    if (!din.hasOwnProperty(namespace))
+      din[namespace] = {};
+
+    var exports = func();
+
+    for (var exportName in exports) {
+      Object.defineProperty(din[namespace], exportName, {
+        configurable: false,
+        enumerable: true,
+        value: exports[exportName],
+        writable: true
+      });
+    }
   }
+
+  var gid = 0;
 
   function init() {
     Object.defineProperty(Node.prototype, "gid", {
@@ -40,6 +52,10 @@ this.din = (function(){
         return "null";
 
       return typeof obj;
+    }
+
+    if (din.inspect.inspector.init) {
+      din.inspect.inspector.init();
     }
   }
 

@@ -1,0 +1,33 @@
+<link rel="import" href="util.html">
+<link rel="import" href="inspect.html">
+
+<script>
+'use strict';
+
+/*
+  Export to the |inspect| namespace. Do not change the namespace.
+*/
+din.exportTo("inspect", function(){
+  /*
+    Create inspector-specific variables and functions.
+  */
+
+  /*
+    Create an inspector instance, and register various callbacks.
+  */
+  var domInspector = new din.inspect.instance("domWatcher");
+
+  domInspector.on("init", function() {
+  });
+
+  domInspector.on("funcEntry", function(domMethod, node, argumentsList) {
+  });
+
+  /*
+    Return the new instance as |inspector|. Do not change the prop name.
+  */
+  return {
+    inspector: domInspector
+  }
+});
+</script>
