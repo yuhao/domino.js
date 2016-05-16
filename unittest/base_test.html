@@ -9,11 +9,11 @@ test('defineNodeGID', function () {
   assert.equal(newEvent.gid, undefined);
 
   var comment = document.createComment('comment');
-  assert.equal(newEvent.gid, undefined);
+  assert.notEqual(comment.gid, undefined);
 
   var newDiv1 = document.createElement("div"); 
   var newDiv2 = document.createElement("div"); 
-  assert.isTrue(newDiv2.gid - newDiv1.gid === 1);
+  assert.isTrue(Math.abs(newDiv2.gid - newDiv1.gid) === 1);
 
   assert.isFalse(newDiv1.propertyIsEnumerable("gid"));
   assert.isFalse(newDiv1.propertyIsEnumerable("_gid"));
