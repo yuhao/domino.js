@@ -1,0 +1,51 @@
+<link rel="import" href="util.html">
+<link rel="import" href="profile.html">
+
+<script>
+'use strict';
+
+din.exportTo("inspector", function(){
+  function funcEntry(target, thisArg, argumentsList) {
+  }
+
+  function funcExit(target, thisArg, argumentsList, returnVal) {
+    din.util.predLog(false,
+        (thisArg === undefined) ? "undefined" : thisArg.constructor.name,
+        "(",
+        thisArg instanceof Node ? thisArg.gid : "undefined",
+        ")",
+        "call",
+        target.name,
+        "return",
+        returnVal instanceof Node ? returnVal.tagName : "",
+        returnVal instanceof Node ? returnVal.gid : "");
+
+    if (thisArg instanceof Node) {
+      var record = new din.profile.OpLog(thisArg.gid, target.name);
+      din.profile.predAdd(false, record);
+      din.profile.tryPost();
+    }
+  }
+
+  function objGet(target, name) {
+  }
+
+  function objSet(target, name, val) {
+  }
+
+  function callbackEntry(triggeringEvent, callback) {
+  }
+
+  function callbackExit() {
+  }
+
+  return {
+    funcEntry: funcEntry,
+    funcExit: funcExit,
+    objGet: objGet,
+    objSet: objSet,
+    callbackEntry: callbackEntry,
+    callbackExit: callbackExit
+  }
+});
+</script>
