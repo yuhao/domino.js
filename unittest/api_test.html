@@ -1,0 +1,53 @@
+<script type="text/javascript">
+'use strict';
+
+test('funcEntryAndfuncExit', function () {
+  var value = 0;
+  var _funcEntry = din.inspector.funcEntry;
+  var _funcExit = din.inspector.funcExit;
+
+  din.inspector.funcEntry = function() {
+    value = 1;
+  }
+  din.inspector.funcExit = function() {
+    value = 2;
+  }
+  var el = document.getElementById("test");
+  assert.equal(value, 2);
+
+  din.inspector.funcEntry = _funcEntry;
+  din.inspector.funcExit = _funcExit;
+});
+
+test('callbackEntryAndcallbackExit', function () {
+  var value = 0;
+  var _callbackEntry = din.inspector.callbackEntry;
+  var _callbackExit = din.inspector.callbackExit;
+
+  var el = document.getElementById("test");
+  var evt = document.createEvent('CustomEvent');
+  evt.initCustomEvent('testevent', true, true, {});
+   
+  el.addEventListener('testevent', function bar(currentEvent) {
+    value = -1;
+  }, false);
+  el.dispatchEvent(evt);
+  assert.equal(value, -1);
+
+  din.inspector.funcEntry = function() {
+    value = 1;
+  }
+  el.dispatchEvent(evt);
+  assert.equal(value, -1);
+
+  din.inspector.funcExit = function() {
+    value = 2;
+  }
+  el.dispatchEvent(evt);
+  assert.equal(value, 2);
+
+  din.inspector.callbackEntry = _callbackEntry;
+  din.inspector.callbackExit = _callbackExit;
+});
+</script>
+

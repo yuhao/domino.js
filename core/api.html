@@ -29,7 +29,7 @@ din.exportTo("api", function(){
       din.inspector.callbackEntry.apply(this, arguments);
   }
 
-  function callbackExit() {
+  function callbackExit(triggeringEvent, callback) {
     if (din.inspector && din.inspector.callbackExit)
       din.inspector.callbackExit.apply(this, arguments);
   }
