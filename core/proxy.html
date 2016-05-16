@@ -1,4 +1,4 @@
-<link rel="import" href="inspection.html">
+<link rel="import" href="api.html">
 <link rel="import" href="util.html">
 
 <script>
@@ -40,7 +40,7 @@ din.exportTo("proxy", function(){
 
   var objHandler = {
     get: function(target, name){
-      din.inspect.objGet(target, name);
+      din.api.objGet(target, name);
 
       if (Object.toType(target[name]) === "object") {
         if (name === "_src") {
@@ -78,7 +78,7 @@ din.exportTo("proxy", function(){
 
     set: function(target, name, val){
       try {
-        din.inspect.objSet(target, name, val);
+        din.api.objSet(target, name, val);
         target[name] = val;
       }
       catch (e) {
@@ -99,7 +99,7 @@ din.exportTo("proxy", function(){
           argumentsList[i] = argumentsList[i]._src;
       }
 
-      din.inspect.funcEntry(target, thisArg, argumentsList);
+      din.api.funcEntry(target, thisArg, argumentsList);
 
       var returnVal;
       if (thisArg === null || thisArg === undefined || !thisArg.hasOwnProperty("_src")) {
@@ -113,7 +113,7 @@ din.exportTo("proxy", function(){
         returnVal = target.apply(thisArg._src, argumentsList);
       }
 
-      din.inspect.funcExit(target, thisArg, argumentsList, returnVal);
+      din.api.funcExit(target, thisArg, argumentsList, returnVal);
 
       if (Object.toType(returnVal) === "object") {
         returnVal = createObjProxy(returnVal);
