@@ -5,8 +5,8 @@ test('getElementById', function () {
   var el = document.getElementById("test");
   assert.isTrue(din.util.isOrHasProxy(el));
 
-  el.style.color = "blue";
-  assert.equal(el.style.color, "blue")
+  el.style.color = "black";
+  assert.equal(el.style.color, "black")
   el.style.color = "red";
   assert.equal(el.style.color, "red")
 
@@ -26,8 +26,8 @@ test('getElementById', function () {
   assert.isTrue(cond)
 
   var jel = $("#test");
-  jel.css("color", "blue");
-  assert.equal(jel.css("color"), "rgb(0, 0, 255)");
+  jel.css("color", "black");
+  assert.equal(jel.css("color"), "rgb(0, 0, 0)");
 });
 
 test('getElementsByTagName', function () {
