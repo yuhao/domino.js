@@ -30,17 +30,31 @@ din.exportTo("inspect", function(){
     }
   }
 
-  function objGet(target, name) {
+  function objBeforeGet(target, name) {
     var inspector = din.inspect.inspector;
-    if (inspector && inspector.objGet) {
-      inspector.objGet.apply(this, arguments);
+    if (inspector && inspector.objBeforeGet) {
+      inspector.objBeforeGet.apply(this, arguments);
     }
   }
 
-  function objSet(target, name, val) {
+  function objAfterGet(target, name, value) {
     var inspector = din.inspect.inspector;
-    if (inspector && inspector.objSet) {
-      inspector.objSet.apply(this, arguments);
+    if (inspector && inspector.objAfterGet) {
+      inspector.objAfterGet.apply(this, arguments);
+    }
+  }
+
+  function objBeforeSet(target, name, val) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.objBeforeSet) {
+      inspector.objBeforeSet.apply(this, arguments);
+    }
+  }
+
+  function objAfterSet(target, name, val) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.objAfterSet) {
+      inspector.objAfterSet.apply(this, arguments);
     }
   }
 
@@ -62,8 +76,10 @@ din.exportTo("inspect", function(){
     instance: instance,
     funcEntry: funcEntry,
     funcExit: funcExit,
-    objGet: objGet,
-    objSet: objSet,
+    objBeforeGet: objBeforeGet,
+    objAfterGet: objAfterGet,
+    objBeforeSet: objBeforeSet,
+    objAfterSet: objAfterSet,
     callbackEntry: callbackEntry,
     callbackExit: callbackExit
   }

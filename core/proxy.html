@@ -40,13 +40,14 @@ din.exportTo("proxy", function(){
 
   var objHandler = {
     get: function(target, name){
-      din.inspect.objGet(target, name);
+      var returnVal;
+      din.inspect.objBeforeGet(target, name);
 
       if (Object.toType(target[name]) === "object") {
         if (name === "_src") {
           // If we are accessing obj_proxy._src, we want obj,
           // not obj_proxy._src._proxy which is obj_proxy itself!
-          return target;
+          returnVal = target;
         }
         else if (name === "_proxy") {
           // obj_proxy._proxy shouldn't return obj._proxy._proxy which is
@@ -55,36 +56,35 @@ din.exportTo("proxy", function(){
           // This can only happen when we are checking isOrHasProxy of
           // obj_proxy. Otherwise, it shouldn't neven happen because
           // technically a proxy object shouldn't have a _proxy property!
-          return target[name];
+          returnVal = target[name];
         } else {
           if (!isIFrameWindow(target, name))
-            return createObjProxy(target[name]);
+            returnVal = createObjProxy(target[name]);
           else
-            return target[name];
+            returnVal = target[name];
         }
       } else if (Object.toType(target[name]) === "function") {
         if (name === "hasOwnProperty") {
           // Do not create a proxy for |hasOwnProperty|, otherwise there is
           // an infinite loop when calling |hasOwnProperty| from the
           // |hasOwnProperty| proxy (see |apply| in funcHandler).
-          return target[name];
+          returnVal = target[name];
         } else {
-          return createFuncProxy(target[name]);
+          returnVal = createFuncProxy(target[name]);
         }
       } else {
-        return target[name];
+        returnVal = target[name];
       }
+
+      din.inspect.objAfterGet(target, name, returnVal);
+      return returnVal;
     },
 
     set: function(target, name, val){
-      try {
-        din.inspect.objSet(target, name, val);
-        target[name] = val;
-      }
-      catch (e) {
-        din.util.predLog(false, e)
-        throw(e)
-      }
+      din.inspect.objBeforeSet(target, name, val);
+      target[name] = val;
+      din.inspect.objAfterSet(target, name, val);
+
       return true;
     }
   };
