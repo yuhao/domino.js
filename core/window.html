@@ -1,9 +1,46 @@
 <link rel="import" href="proxy.html">
+<link rel="import" href="inspect.html">
 
 <script>
 'use strict';
 
 din.exportTo("win", function(){
+  function genTimeoutCallback(callback) {
+    return function() {
+      din.inspect.timeoutCbEntry(callback, arguments);
+      var returnVal = callback.apply(this, arguments);
+      din.inspect.timeoutCbExit(callback, arguments, returnVal);
+    }
+  }
+
+  function genIntervalCallback(callback) {
+    return function() {
+      din.inspect.intervalCbEntry(callback, arguments);
+      var returnVal = callback.apply(this, arguments);
+      din.inspect.intervalCbExit(callback, arguments, returnVal);
+    }
+  }
+
+  function instrumentTimer(prop) {
+    if (prop === "setTimeout") {
+      var _setTimeout = window.setTimeout;
+      window.setTimeout = function setTimeout() {
+        var originalCallback = arguments[0];
+        var actualCallback = genTimeoutCallback(originalCallback);
+        arguments[0] = actualCallback;
+        _setTimeout.apply(this, arguments);
+      }
+    } else if (prop === "setInterval") {
+      var _setInterval = window.setInterval;
+      window.setInterval = function setInterval() {
+        var originalCallback = arguments[0];
+        var actualCallback = genIntervalCallback(originalCallback);
+        arguments[0] = actualCallback;
+        _setInterval.apply(this, arguments);
+      }
+    }
+  }
+
   function instrumentWindowProp() {
     var getterOfProp, setterOfProp, writableOfProp;
 
@@ -33,10 +70,15 @@ din.exportTo("win", function(){
       if ((getterOfProp === undefined && writableOfProp === true) ||
           (getterOfProp !== undefined && setterOfProp !== undefined)) {
         var shadowProp = window[prop];
-        if (Object.toType(shadowProp) === "function")
+        if (Object.toType(shadowProp) === "function") {
+          if (prop === "setTimeout" || prop === "setInterval") {
+            instrumentTimer(prop);
+            shadowProp = window[prop];
+          }
           window[prop] = din.proxy.createFuncProxy(shadowProp);
-        else if (Object.toType(shadowProp) === "object")
+        } else if (Object.toType(shadowProp) === "object") {
           window[prop] = din.proxy.createObjProxy(shadowProp);
+        }
       }
     }
   }

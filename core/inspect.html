@@ -2,6 +2,9 @@
 'use strict';
 
 din.exportTo("inspect", function(){
+  /*
+    Inspector instance
+  */
   function instance(name, enabled) {
     this.name = name;
     if (enabled === undefined)
@@ -16,6 +19,9 @@ din.exportTo("inspect", function(){
     }
   }
 
+  /*
+    Inspector methods
+  */
   function funcEntry(target, thisArg, argumentsList) {
     var inspector = din.inspect.inspector;
     if (inspector && inspector.funcEntry) {
@@ -58,6 +64,34 @@ din.exportTo("inspect", function(){
     }
   }
 
+  function timeoutCbEntry(callback, arglist) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.timeoutCbEntry) {
+      inspector.timeoutCbEntry.apply(this, arguments);
+    }
+  }
+
+  function timeoutCbExit(callback, arglist, returnVal) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.timeoutCbExit) {
+      inspector.timeoutCbExit.apply(this, arguments);
+    }
+  }
+
+  function intervalCbEntry(callback, arglist) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.intervalCbEntry) {
+      inspector.intervalCbEntry.apply(this, arguments);
+    }
+  }
+
+  function intervalCbExit(callback, arglist, returnVal) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.intervalCbExit) {
+      inspector.intervalCbExit.apply(this, arguments);
+    }
+  }
+
   return {
     instance: instance,
     funcEntry: funcEntry,
@@ -65,7 +99,11 @@ din.exportTo("inspect", function(){
     objGet: objGet,
     objSet: objSet,
     callbackEntry: callbackEntry,
-    callbackExit: callbackExit
+    callbackExit: callbackExit,
+    timeoutCbEntry: timeoutCbEntry,
+    timeoutCbExit: timeoutCbExit,
+    intervalCbEntry: intervalCbEntry,
+    intervalCbExit: intervalCbExit
   }
 });
 </script>
