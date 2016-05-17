@@ -13,12 +13,19 @@ test('getComputedStyle', function () {
 });
 
 test('setTimeout', function () {
-  var el = document.getElementById("test");
+  din.inspect.inspector = null;
 
-  window.setTimeout(function(){
-    el.style.color = "black";
-    assert.equal(el.style.color, "black");
-  }, 0);
+  window.value = 1;
+  var testObj = {
+    value: 2,
+    foo: function(shouldBeValue) {
+      assert.equal(this.value, shouldBeValue);
+      return this.value;
+    }
+  }
+  testObj.foo(2);
+  window.setTimeout(testObj.foo, 0, 1);
+  window.setTimeout(testObj.foo.bind(testObj), 0, 2);
 });
 
 test('frames', function () {
