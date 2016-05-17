@@ -12,6 +12,8 @@ din.exportTo("inspect", function(){
 
   instance.prototype = {
     on: function(name, func) {
+      if (this.hasOwnProperty(name))
+        throw name+" has already be registered in "+this.name+"!";
       this[name] = func;
     }
   }
