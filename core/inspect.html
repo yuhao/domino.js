@@ -2,8 +2,12 @@
 'use strict';
 
 din.exportTo("inspect", function(){
-  function instance(name) {
+  function instance(name, enabled) {
     this.name = name;
+    if (enabled === undefined)
+      this.enableInstrument = true;
+    else
+      this.enableInstrument = enabled;
   }
 
   instance.prototype = {

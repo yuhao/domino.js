@@ -8,13 +8,10 @@
 <script>
 'use strict';
 
-din.init();
-
-din.evt.instrumentEventTarget();
-
-din.cst.instrumentConstructor();
-
-din.doc.instrumentDocumentProp();
-
-din.win.instrumentWindowProp();
+if (din.init()) {
+  din.evt.instrumentEventTarget();
+  din.cst.instrumentConstructor();
+  din.doc.instrumentDocumentProp();
+  din.win.instrumentWindowProp();
+}
 </script>

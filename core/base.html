@@ -28,6 +28,9 @@ this.din = (function(){
   var gid = 0;
 
   function init() {
+    if (din.inspect.inspector && !din.inspect.inspector.enableInstrument)
+      return false;
+
     Object.defineProperty(Node.prototype, "gid", {
       configurable: false,
       enumerable: false,
@@ -54,9 +57,11 @@ this.din = (function(){
       return typeof obj;
     }
 
-    if (din.inspect.inspector.init) {
+    if (din.inspect.inspector && din.inspect.inspector.init) {
       din.inspect.inspector.init();
     }
+
+    return true;
   }
 
   return {
