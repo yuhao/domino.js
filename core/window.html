@@ -28,7 +28,7 @@ din.exportTo("win", function(){
         var originalCallback = arguments[0];
         var actualCallback = genTimeoutCallback(originalCallback);
         arguments[0] = actualCallback;
-        _setTimeout.apply(this, arguments);
+        return _setTimeout.apply(this, arguments);
       }
     } else if (prop === "setInterval") {
       var _setInterval = window.setInterval;
@@ -36,7 +36,7 @@ din.exportTo("win", function(){
         var originalCallback = arguments[0];
         var actualCallback = genIntervalCallback(originalCallback);
         arguments[0] = actualCallback;
-        _setInterval.apply(this, arguments);
+        return _setInterval.apply(this, arguments);
       }
     }
   }
