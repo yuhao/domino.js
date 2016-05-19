@@ -51,9 +51,9 @@ test('createNewPropAndSetValue', function () {
   document.__proto__.__proto__.testProp2 = "newProp";
   document.testProp3 = function() {return 1+4;}
 
-  din.doc.instrumentOneDocumentProp("testProp1");
-  din.doc.instrumentOneDocumentProp("testProp2");
-  din.doc.instrumentOneDocumentProp("testProp3");
+  din.instrument.instrumentOneDocumentProp("testProp1");
+  din.instrument.instrumentOneDocumentProp("testProp2");
+  din.instrument.instrumentOneDocumentProp("testProp3");
 
   document.testProp1.intval = 4;
   document.testProp1.stringVal = "newTest";
@@ -84,7 +84,7 @@ test('getPropThatIsNull', function () {
 test('overwriteFunc', function () {
   document.__proto__.__proto__.testProp1 = function() {return 1+4;}
 
-  din.doc.instrumentOneDocumentProp("testProp1");
+  din.instrument.instrumentOneDocumentProp("testProp1");
 
   document._testProp1 = document.testProp1;
 
@@ -106,7 +106,7 @@ test('overwriteFunc', function () {
 
 test('deleteDocumentPrototypeProp', function () {
   document.__proto__.__proto__.testProp1 = function() {return 1+4;}
-  din.doc.instrumentOneDocumentProp("testProp1");
+  din.instrument.instrumentOneDocumentProp("testProp1");
   delete document.__proto__.__proto__;
 
   assert.isTrue(document.hasOwnProperty("testProp1"));

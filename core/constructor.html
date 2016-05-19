@@ -3,7 +3,7 @@
 <script>
 'use strict';
 
-din.exportTo("cst", function(){
+din.exportTo("instrument", function(){
   function instrumentMutationObserver() {
     var _observe = MutationObserver.prototype.observe;
     MutationObserver.prototype.observe = function observe() {
@@ -19,7 +19,6 @@ din.exportTo("cst", function(){
   }
 
   return {
-    instrumentMutationObserver: instrumentMutationObserver,
     instrumentConstructor: instrumentConstructor
   }
 });
