@@ -1,22 +1,14 @@
 vulcanize -o din.html core/main.html
 
-cat din.html | awk '
-{
-  if (NR >= 4 &&
-      line != "\x27use strict\x27;" &&
-      line != "<script>" &&
-      line != "</script>") {
-    print line;
-  }
-  line = $0;
-}' | awk '
+node htmlparser.js | awk '
 BEGIN {
-  print "injectScript(function() {"
+  print "injectScript(function() {";
 }
 {
-  print "  "$0;
+  if (NF != 0)
+    print "  "$0
 }
 END {
-  print "});"
+  print "});";
 }
 ' | cat plugin/content-script-template.js - > plugin/content-script.js
