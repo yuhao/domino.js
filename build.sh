@@ -1,6 +1,6 @@
 vulcanize -o din.html core/main.html
 
-node htmlparser.js | awk '
+node extractJS.js | awk '
 BEGIN {
   print "injectScript(function() {";
 }
