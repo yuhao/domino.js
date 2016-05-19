@@ -65,17 +65,17 @@ din.exportTo("inspect", function(){
     }
   }
 
-  function callbackEntry(triggeringEvent, callback) {
+  function eventCbEntry(triggeringEvent, callback) {
     var inspector = din.inspect.inspector;
-    if (inspector && inspector.callbackEntry) {
-      inspector.callbackEntry.apply(this, arguments);
+    if (inspector && inspector.eventCbEntry) {
+      inspector.eventCbEntry.apply(this, arguments);
     }
   }
 
-  function callbackExit(triggeringEvent, callback) {
+  function eventCbExit(triggeringEvent, callback) {
     var inspector = din.inspect.inspector;
-    if (inspector && inspector.callbackExit) {
-      inspector.callbackExit.apply(this, arguments);
+    if (inspector && inspector.eventCbExit) {
+      inspector.eventCbExit.apply(this, arguments);
     }
   }
 
@@ -115,8 +115,8 @@ din.exportTo("inspect", function(){
     objAfterGet: objAfterGet,
     objBeforeSet: objBeforeSet,
     objAfterSet: objAfterSet,
-    callbackEntry: callbackEntry,
-    callbackExit: callbackExit,
+    eventCbEntry: eventCbEntry,
+    eventCbExit: eventCbExit,
     timeoutCbEntry: timeoutCbEntry,
     timeoutCbExit: timeoutCbExit,
     intervalCbEntry: intervalCbEntry,

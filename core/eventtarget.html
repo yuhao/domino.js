@@ -3,7 +3,7 @@
 <script>
 
 din.exportTo("instrument", function(){
-  function genCallback(callback) {
+  function genEventCallback(callback) {
     return function() {
       // |callback| implements the EventListener interface whose arguments[0]
       // will be a vanilla Event object that dispatchEvent passes in. We take
@@ -16,9 +16,9 @@ din.exportTo("instrument", function(){
         arguments[0] = din.proxy.createObjProxy(currentEvent);
       }
 
-      din.inspect.callbackEntry(currentEvent, callback);
+      din.inspect.eventCbEntry(currentEvent, callback);
       callback.apply(this, arguments);
-      din.inspect.callbackExit(currentEvent, callback);
+      din.inspect.eventCbExit(currentEvent, callback);
     }
   }
 
@@ -28,7 +28,7 @@ din.exportTo("instrument", function(){
       // addEventListener mandates that arguments[1] must be a callback that
       // implements the EventListener interface.
       var originalCallback = arguments[1];
-      var actualCallback = genCallback(originalCallback);
+      var actualCallback = genEventCallback(originalCallback);
       originalCallback._actualCb = actualCallback;
       arguments[1] = actualCallback;
       _addEventListener.apply(this, arguments);
