@@ -33,6 +33,7 @@
     "cors": "~2.7.1",
     "express": "~4.10.2",
     "htmlparser2": "^3.9.0",
-    "mongoose": "~3.8.22"
+    "mongoose": "~3.8.22",
+    "strip-comments": "^0.4.4"
   }
 }
