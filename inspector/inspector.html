@@ -1,0 +1,141 @@
+<link rel="import" href="inspect.html">
+<!-- Optional imports below-->
+<link rel="import" href="util.html">
+
+<script>
+
+/*
+  Export to the |inspect| namespace. Do not change the namespace.
+*/
+din.exportTo("inspect", function(){
+  /*
+    Create inspector-specific variables and functions.
+  */
+  var eventScope;
+  var globalStyleId = 0;
+  var setStyle = {};
+  var getStyle = {};
+  var numStyleGet = 0;
+  var numSilentStyleGet = 0;
+  var numStyleSet = 0;
+  var numSilentStyleSet = 0;
+
+  /*
+    Create an inspector instance, and register various callbacks.
+  */
+  var domInspector = new din.inspect.instance("styleWatcher");
+
+  domInspector.on("init", function() {
+    Object.defineProperty(CSSStyleDeclaration.prototype, "sid", {
+      configurable: false,
+      enumerable: false,
+      get: function() {
+        if (this._sid === undefined) {
+          Object.defineProperty(this, "_sid", {
+            configurable: false,
+            enumerable: false,
+            value: globalStyleId++,
+            writable: true
+          });
+        }
+        return this._sid;
+      }
+    });
+  });
+
+  domInspector.on("objAfterGet", function(obj, prop, val) {
+    if (obj instanceof CSSStyleDeclaration &&
+        Object.toType(obj[prop]) !== "function" &&
+        prop !== "_src") {
+      numStyleGet++;
+      if (getStyle[prop] === val) {
+        din.util.predLog(true, "%cget", "background: #0e8a16; color: #ffffff",
+            obj.sid, prop, "["+val+"]");
+        numSilentStyleGet++;
+      } else {
+        din.util.predLog(true, "%cget", "background: #d93f0b; color: #ffffff",
+            obj.sid, prop, "["+getStyle[prop]+"] -->", "["+val+"]");
+      }
+      getStyle[prop] = val;
+    }
+  });
+
+  domInspector.on("objBeforeSet", function(obj, prop, val) {
+    if (obj instanceof CSSStyleDeclaration &&
+        Object.toType(obj[prop]) !== "function" &&
+        prop !== "_src") {
+      numStyleSet++;
+      if (setStyle[prop] === val) {
+        din.util.predLog(true, "%cset", "background: #0e8a16; color: #ffffff",
+            obj.sid, prop, "["+val+"]");
+        numSilentStyleSet++;
+      } else {
+        din.util.predLog(true, "%cset", "background: #d93f0b; color: #ffffff",
+            obj.sid, prop, "["+setStyle[prop]+"] -->", "["+val+"]");
+      }
+      setStyle[prop] = val;
+    }
+  });
+
+  domInspector.on("eventCbEntry", function(triggeringEvent, callback) {
+    numStyleGet = 0;
+    numSilentStyleGet = 0;
+    numStyleSet = 0;
+    numSilentStyleSet = 0;
+
+    eventScope = triggeringEvent.type;
+    var targetElement = triggeringEvent.target;
+
+    din.util.predLog(false, "Entering event", eventScope,
+        "on", targetElement.nodeName ? targetElement.nodeName :
+        targetElement.constructor.name);
+  });
+
+  domInspector.on("eventCbExit", function(triggeringEvent, callback) {
+    var targetElement = triggeringEvent.target;
+    din.util.predLog(true, "Exiting", eventScope, 
+        "on", targetElement.nodeName ? targetElement.nodeName :
+        targetElement.constructor.name,
+        numSilentStyleGet+"/"+numStyleGet,
+        numSilentStyleSet+"/"+numStyleSet);
+  });
+
+  domInspector.on("timeoutCbEntry", function(callback, arglist) {
+    numStyleGet = 0;
+    numSilentStyleGet = 0;
+    numStyleSet = 0;
+    numSilentStyleSet = 0;
+
+    din.util.predLog(false, "Entering timeoutCb", callback.name);
+  });
+
+  domInspector.on("timeoutCbExit", function(callback, arglist) {
+    if (numStyleGet !== 0 || numStyleSet !== 0)
+      din.util.predLog(true, "Exiting timeoutCb", "["+callback.name+"]",
+          numStyleGet, numStyleSet);
+  });
+
+  domInspector.on("intervalCbEntry", function(callback, arglist) {
+    numStyleGet = 0;
+    numSilentStyleGet = 0;
+    numStyleSet = 0;
+    numSilentStyleSet = 0;
+
+    din.util.predLog(false, "Entering intervalCb", callback.name);
+  });
+
+  domInspector.on("intervalCbExit", function(callback, arglist) {
+    if (numStyleGet !== 0 || numStyleSet !== 0)
+      din.util.predLog(true, "Exiting intervalCb", "["+callback.name+"]",
+          numStyleGet, numStyleSet);
+  });
+
+  /*
+    Return the new instance as |inspector|. Do not change the prop name.
+  */
+  return {
+    inspector: domInspector
+  }
+});
+
+</script>
