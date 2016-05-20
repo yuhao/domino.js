@@ -80,7 +80,8 @@ test('registerEventCb', function () {
 
   var value = 0;
 
-  myInspector.on("registerEventCb", function(callback) {
+  myInspector.on("registerEventCb", function(arglist) {
+    var callback = arglist[1];
     callback.fid = 1;
   });
 

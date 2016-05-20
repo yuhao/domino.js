@@ -65,7 +65,7 @@ din.exportTo("inspect", function(){
     }
   }
 
-  function registerEventCb(callback) {
+  function registerEventCb(arglist) {
     var inspector = din.inspect.inspector;
     if (inspector && inspector.registerEventCb) {
       inspector.registerEventCb.apply(this, arguments);
