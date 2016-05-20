@@ -1,4 +1,4 @@
-vulcanize -o din.html core/main.html
+node_modules/vulcanize/bin/vulcanize -o din.html core/main.html
 
 node extractJS.js | awk '
 BEGIN {
