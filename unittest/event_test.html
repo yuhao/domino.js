@@ -74,5 +74,31 @@ test('removeEventListener', function () {
   assert.equal(value, 0);
 });
 
+test('registerEventCb', function () {
+  var myInspector = new din.inspect.instance("myInspector");
+  din.inspect.inspector = myInspector;
+
+  var value = 0;
+
+  myInspector.on("registerEventCb", function(callback) {
+    callback.fid = 1;
+  });
+
+  myInspector.on("eventCbEntry", function(triggeringEvent, callback) {
+    value = callback.fid;
+  });
+
+  var el = document.getElementById("test");
+  var evt = document.createEvent('CustomEvent');
+  evt.initCustomEvent('testevent', true, true, {});
+
+  el.addEventListener('testevent', function bar(currentEvent) {
+  }, false);
+
+  el.dispatchEvent(evt);
+
+  assert.equal(value, 1);
+});
+
 </script>
 

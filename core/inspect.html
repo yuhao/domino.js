@@ -65,6 +65,13 @@ din.exportTo("inspect", function(){
     }
   }
 
+  function registerEventCb(callback) {
+    var inspector = din.inspect.inspector;
+    if (inspector && inspector.registerEventCb) {
+      inspector.registerEventCb.apply(this, arguments);
+    }
+  }
+
   function eventCbEntry(triggeringEvent, callback) {
     var inspector = din.inspect.inspector;
     if (inspector && inspector.eventCbEntry) {
@@ -115,6 +122,7 @@ din.exportTo("inspect", function(){
     objAfterGet: objAfterGet,
     objBeforeSet: objBeforeSet,
     objAfterSet: objAfterSet,
+    registerEventCb: registerEventCb,
     eventCbEntry: eventCbEntry,
     eventCbExit: eventCbExit,
     timeoutCbEntry: timeoutCbEntry,
