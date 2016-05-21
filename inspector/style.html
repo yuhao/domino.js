@@ -1,0 +1,141 @@
+<link rel="import" href="inspect.html">
+<!-- Optional imports below-->
+<link rel="import" href="util.html">
+
+<script>
+
+/*
+  Export to the |inspect| namespace. Do not change the namespace.
+*/
+din.exportTo("inspect", function(){
+  /*
+    Create inspector-specific variables and functions.
+  */
+  var eventScope;
+  var globalStyleId = 0;
+  var globalFuncId = 0;
+  // writeSet: one per event callback. It records all the style objects that
+  // are modified and how they are modified (before/after value and number
+  // of modifications). It is indexed by writeSet[sid][prop].
+  var writeSet = {};
+  // callbackLog[fid] is an array of writeSet that are associated with
+  // the callback |fid|. The |writeSet| appear in the order they happened.
+  var callbackLog = {};
+
+  /*
+    Create an inspector instance, and register various callbacks.
+  */
+  var domInspector = new din.inspect.instance("styleWatcher");
+
+  domInspector.on("init", function() {
+    Object.defineProperty(CSSStyleDeclaration.prototype, "sid", {
+      configurable: false,
+      enumerable: false,
+      get: function() {
+        if (this._sid === undefined) {
+          Object.defineProperty(this, "_sid", {
+            configurable: false,
+            enumerable: false,
+            value: globalStyleId++,
+            writable: true
+          });
+        }
+        return this._sid;
+      }
+    });
+  });
+
+  domInspector.on("registerEventCb", function(arglist) {
+    // Or we could define a |fid| property in Function.prototype.
+    var callback = arglist[1];
+    if (!callback.hasOwnProperty("fid"))
+      callback.fid = globalFuncId++;
+  });
+
+  domInspector.on("objBeforeSet", function(obj, prop, val) {
+    if (obj instanceof CSSStyleDeclaration &&
+        Object.toType(obj[prop]) !== "function" &&
+        prop !== "_src") {
+      var sid = obj.sid;
+
+      if (sid in writeSet) {
+        if (prop in writeSet[sid]) {
+          writeSet[sid][prop].after = val;
+          writeSet[sid][prop].count++;
+        } else {
+          var thisWrite = {};
+          thisWrite.before = obj[prop];
+          thisWrite.after = val;
+          thisWrite.count = 1;
+          writeSet[sid][prop] = thisWrite;
+        }
+      } else {
+        var thisStyle = {};
+        var thisWrite = {};
+        thisWrite.before = obj[prop];
+        thisWrite.after = val;
+        thisWrite.count = 1;
+        thisStyle[prop] = thisWrite;
+        writeSet[sid] = thisStyle;
+      }
+    }
+  });
+
+  domInspector.on("eventCbEntry", function(triggeringEvent, callback) {
+    writeSet = {};
+
+    eventScope = triggeringEvent.type;
+
+    var targetElement = triggeringEvent.target;
+    din.util.predLog(false, "Entering event", eventScope,
+        "on", targetElement.nodeName ? targetElement.nodeName :
+        targetElement.constructor.name);
+  });
+
+  domInspector.on("eventCbExit", function(triggeringEvent, callback) {
+    if (Object.keys(writeSet).length > 0) {
+      var fid = callback.fid;
+      if (!(fid in callbackLog)) {
+        callbackLog[fid] = [];
+      }
+      callbackLog[fid].push(writeSet);
+
+      var targetElement = triggeringEvent.target;
+      din.util.predLog(true, "Exiting", eventScope + "(fid=" + callback.fid + ")",
+          "on", targetElement.nodeName ?
+          targetElement.nodeName + "(gid=" + targetElement.gid + ")" :
+          targetElement.constructor.name, writeSet, callbackLog[fid]);
+    }
+  });
+
+  domInspector.on("timeoutCbEntry", function(callback, arglist) {
+    writeSet = {};
+
+    din.util.predLog(false, "Entering timeoutCb", callback.name);
+  });
+
+  domInspector.on("timeoutCbExit", function(callback, arglist) {
+    if (Object.keys(writeSet).length > 0)
+      din.util.predLog(false, "Exiting timeoutCb", "["+callback.name+"]", writeSet);
+  });
+
+  domInspector.on("intervalCbEntry", function(callback, arglist) {
+    writeSet = {};
+
+    din.util.predLog(false, "Entering intervalCb", callback.name);
+  });
+
+  domInspector.on("intervalCbExit", function(callback, arglist) {
+    if (Object.keys(writeSet).length > 0)
+      din.util.predLog(false, "Exiting intervalCb", "["+callback.name+"]", writeSet);
+  });
+
+  /*
+    Return the new instance as |inspector|. Do not change the prop name.
+  */
+  return {
+    inspector: domInspector
+  }
+});
+
+</script>
