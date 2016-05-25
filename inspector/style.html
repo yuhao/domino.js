@@ -25,9 +25,9 @@ din.exportTo("inspect", function(){
   /*
     Create an inspector instance, and register various callbacks.
   */
-  var domInspector = new din.inspect.instance("styleWatcher");
+  var styleInspector = new din.inspect.instance("styleWatcher");
 
-  domInspector.on("init", function() {
+  styleInspector.on("init", function() {
     Object.defineProperty(CSSStyleDeclaration.prototype, "sid", {
       configurable: false,
       enumerable: false,
@@ -45,14 +45,14 @@ din.exportTo("inspect", function(){
     });
   });
 
-  domInspector.on("registerEventCb", function(arglist) {
+  styleInspector.on("registerEventCb", function(arglist) {
     // Or we could define a |fid| property in Function.prototype.
     var callback = arglist[1];
     if (!callback.hasOwnProperty("fid"))
       callback.fid = globalFuncId++;
   });
 
-  domInspector.on("objBeforeSet", function(obj, prop, val) {
+  styleInspector.on("objBeforeSet", function(obj, prop, val) {
     if (obj instanceof CSSStyleDeclaration &&
         Object.toType(obj[prop]) !== "function" &&
         prop !== "_src") {
@@ -81,7 +81,7 @@ din.exportTo("inspect", function(){
     }
   });
 
-  domInspector.on("eventCbEntry", function(triggeringEvent, callback) {
+  styleInspector.on("eventCbEntry", function(triggeringEvent, callback) {
     writeSet = {};
 
     eventScope = triggeringEvent.type;
@@ -92,7 +92,7 @@ din.exportTo("inspect", function(){
         targetElement.constructor.name);
   });
 
-  domInspector.on("eventCbExit", function(triggeringEvent, callback) {
+  styleInspector.on("eventCbExit", function(triggeringEvent, callback) {
     if (Object.keys(writeSet).length > 0) {
       var fid = callback.fid;
       if (!(fid in callbackLog)) {
@@ -108,24 +108,24 @@ din.exportTo("inspect", function(){
     }
   });
 
-  domInspector.on("timeoutCbEntry", function(callback, arglist) {
+  styleInspector.on("timeoutCbEntry", function(callback, arglist) {
     writeSet = {};
 
     din.util.predLog(false, "Entering timeoutCb", callback.name);
   });
 
-  domInspector.on("timeoutCbExit", function(callback, arglist) {
+  styleInspector.on("timeoutCbExit", function(callback, arglist) {
     if (Object.keys(writeSet).length > 0)
       din.util.predLog(false, "Exiting timeoutCb", "["+callback.name+"]", writeSet);
   });
 
-  domInspector.on("intervalCbEntry", function(callback, arglist) {
+  styleInspector.on("intervalCbEntry", function(callback, arglist) {
     writeSet = {};
 
     din.util.predLog(false, "Entering intervalCb", callback.name);
   });
 
-  domInspector.on("intervalCbExit", function(callback, arglist) {
+  styleInspector.on("intervalCbExit", function(callback, arglist) {
     if (Object.keys(writeSet).length > 0)
       din.util.predLog(false, "Exiting intervalCb", "["+callback.name+"]", writeSet);
   });
@@ -134,7 +134,7 @@ din.exportTo("inspect", function(){
     Return the new instance as |inspector|. Do not change the prop name.
   */
   return {
-    inspector: domInspector
+    inspector: styleInspector
   }
 });
 
