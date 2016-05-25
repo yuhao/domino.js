@@ -1,0 +1,92 @@
+<link rel="import" href="/domino.js/core/inspect.html">
+<!-- Optional imports below-->
+<link rel="import" href="/domino.js/core/util.html">
+
+<script>
+
+/*
+  Export to the |inspect| namespace. Do not change the namespace.
+*/
+din.exportTo("inspect", function() {
+  /*
+    Create inspector-specific variables and functions.
+  */
+  var eventScope;
+
+  // Setup for mutationObserver
+  var mutationRecords = [];
+  var observer = new MutationObserver(function(mutations, thisObserver) {
+    // It's possible that this callback is called before mutations are taken
+    // synchronously by takeRecords(). We buffer them and merge them later.
+    mutationRecords = mutationRecords.concat(mutations);
+  });
+  var config = { attributes: true,
+                 attributeOldValue: true,
+                 //attributeFilter: [],
+                 characterData: false,
+                 characterDataOldValue: false,
+                 childList: true,
+                 subtree: true };
+
+  function startObserver() {
+    // Start observing DOM mutations.
+    mutationRecords = [];
+    observer.observe(document, config);
+  }
+
+  function stopObserver() {
+    // Synchronously take all the mutations, merge with previously buffer
+    // mutations, and disconnect the observer.
+    mutations = observer.takeRecords();
+    mutationRecords = mutationRecords.concat(mutations);
+    console.log(mutationRecords);
+    observer.disconnect();
+  }
+
+  /*
+    Create an inspector instance, and register various callbacks.
+  */
+  var domInspector = new din.inspect.instance("mutationObserver");
+
+  domInspector.on("eventCbEntry", function(triggeringEvent, callback) {
+    eventScope = triggeringEvent.type;
+
+    var targetElement = triggeringEvent.target;
+    din.util.predLog(true, "Entering event", eventScope,
+        "on", targetElement.nodeName ? targetElement.nodeName :
+        targetElement.constructor.name);
+
+    startObserver();
+  });
+
+  domInspector.on("eventCbExit", function(triggeringEvent, callback) {
+    stopObserver();
+
+    var targetElement = triggeringEvent.target;
+    din.util.predLog(true, "Exiting", eventScope,
+        "on", targetElement.nodeName ?
+        targetElement.nodeName + "(gid=" + targetElement.gid + ")" :
+        targetElement.constructor.name);
+  });
+
+  domInspector.on("timeoutCbEntry", function(callback, arglist) {
+  });
+
+  domInspector.on("timeoutCbExit", function(callback, arglist) {
+  });
+
+  domInspector.on("intervalCbEntry", function(callback, arglist) {
+  });
+
+  domInspector.on("intervalCbExit", function(callback, arglist) {
+  });
+
+  /*
+    Return the new instance as |inspector|. Do not change the prop name.
+  */
+  return {
+    inspector: domInspector
+  }
+});
+
+</script>
