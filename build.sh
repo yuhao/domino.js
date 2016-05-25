@@ -10,7 +10,7 @@ fi
 cp $inspector core/inspector.html
 
 echo "Generating content script"
-node_modules/vulcanize/bin/vulcanize -o din.html core/main.html
+node_modules/vulcanize/bin/vulcanize -o din.html domino.js/core/main.html --abspath ..
 node extractJS.js | awk '
 BEGIN {
   print "injectScript(function() {";
