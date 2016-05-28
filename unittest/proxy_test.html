@@ -23,12 +23,21 @@ test('createObjProxy', function () {
 
   assert.equal(testObj.intVal, testObj_proxy.intVal);
   assert.equal(testObj_proxy.newIntVal, 4);
-  assert.isTrue(din.util.isOrHasProxy(testObj));
-  assert.isFalse(din.util.isOrHasProxy(testObj.nestedObjProp));
+
+  assert.isTrue(din.util.hasProxy(testObj));
+  assert.isFalse(din.util.isProxy(testObj));
+  assert.isTrue(din.util.isProxy(testObj_proxy));
+  assert.isFalse(din.util.hasProxy(testObj_proxy));
+
+  assert.isFalse(din.util.isProxy(testObj.nestedObjProp));
+  assert.isFalse(din.util.hasProxy(testObj.nestedObjProp));
 
   // This accesses testObj_proxy.nestedObjProp, and a proxy is created for it
   assert.equal(testObj_proxy.nestedObjProp.nestedProp, "testProp");
-  assert.isTrue(din.util.isOrHasProxy(testObj.nestedObjProp));
+  assert.isFalse(din.util.isProxy(testObj.nestedObjProp));
+  assert.isTrue(din.util.hasProxy(testObj.nestedObjProp));
+  assert.isTrue(din.util.isProxy(testObj_proxy.nestedObjProp));
+  assert.isFalse(din.util.hasProxy(testObj_proxy.nestedObjProp));
 });
  
 test('createObjProxyTwice', function () {
@@ -114,7 +123,8 @@ test('createObjProxyFromNonObj', function () {
   var testInt = 2;
   var testInt_proxy = din.proxy.createObjProxy(testInt);
 
-  assert.isFalse(din.util.isOrHasProxy(testInt_proxy));
+  assert.isFalse(din.util.isProxy(testInt_proxy));
+  assert.isFalse(din.util.hasProxy(testInt_proxy));
 });
 
 test('funcToString', function () {
@@ -155,7 +165,8 @@ test('createProxyForIFrameWindow', function () {
 
 test('doNOTCreateProxyForDOMStringMap', function () {
   var el = document.getElementById("test");
-  assert.isFalse(din.util.isOrHasProxy(el.dataset));
+  assert.isFalse(din.util.isProxy(el.dataset));
+  assert.isFalse(din.util.hasProxy(el.dataset));
 
   el.dataset.num = 15;
   assert.equal(el.dataset.num, 15)

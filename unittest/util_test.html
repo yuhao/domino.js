@@ -25,14 +25,35 @@ test('findPropOwner', function () {
   delete document.testProp3;
 });
 
-test('isOrHasProxy', function () {
+test('isProxyAndHasProxy', function () {
   var testObj = {
     intVal: 2,
   }
-  assert.isFalse(din.util.isOrHasProxy(testObj));
+  assert.isFalse(din.util.isProxy(testObj));
+  assert.isFalse(din.util.hasProxy(testObj));
 
   var testObj_proxy = din.proxy.createObjProxy(testObj);
-  assert.isTrue(din.util.isOrHasProxy(testObj));
+
+  assert.isTrue(din.util.isProxy(testObj_proxy));
+  assert.isFalse(din.util.hasProxy(testObj_proxy));
+  assert.isTrue(din.util.hasProxy(testObj_proxy._src));
+  assert.isFalse(din.util.isProxy(testObj_proxy._src));
+
+  assert.isFalse(din.util.isProxy(testObj));
+  assert.isTrue(din.util.hasProxy(testObj));
+  assert.isTrue(din.util.isProxy(testObj._proxy));
+  assert.isFalse(din.util.hasProxy(testObj._proxy));
+
+  testObj.testFunc = function () {
+  }
+  assert.isFalse(din.util.isProxy(testObj.testFunc));
+
+  testObj.testFunc = din.proxy.createFuncProxy(testObj.testFunc);
+
+  assert.isTrue(din.util.isProxy(testObj.testFunc));
+  assert.isFalse(din.util.hasProxy(testObj.testFunc._proxy));
+  assert.isFalse(din.util.isProxy(testObj.testFunc._src));
+  assert.isTrue(din.util.hasProxy(testObj.testFunc._src));
 });
 
 test('countDOMNodes', function () {

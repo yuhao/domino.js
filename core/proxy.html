@@ -39,6 +39,10 @@ din.exportTo("proxy", function(){
 
   var objHandler = {
     get: function(target, name){
+      if (name === "isProxy") {
+        return true;
+      }
+
       var returnVal;
       din.inspect.objBeforeGet(target, name);
 
@@ -47,13 +51,12 @@ din.exportTo("proxy", function(){
           // If we are accessing obj_proxy._src, we want obj,
           // not obj_proxy._src._proxy which is obj_proxy itself!
           returnVal = target;
-        }
-        else if (name === "_proxy") {
+        } else if (name === "_proxy") {
           // obj_proxy._proxy shouldn't return obj._proxy._proxy which is
           // obj_proxy._proxy, and then we have an infinite loop! We print
           // a warning and return obj._proxy to prevent the infinite loop.
-          // This can only happen when we are checking isOrHasProxy of
-          // obj_proxy. Otherwise, it shouldn't neven happen because
+          // This can only happen when we are checking isProxy of
+          // obj_proxy. Otherwise, it shouldn't never happen because
           // technically a proxy object shouldn't have a _proxy property!
           returnVal = target[name];
         } else {
@@ -89,12 +92,23 @@ din.exportTo("proxy", function(){
   };
 
   var funcHandler = {
+    get: function(target, name){
+      if (name === "isProxy") {
+        return true;
+      }
+
+      //TODO: typically you wouldn't define a property in a function object so
+      //we do not further proxy function object properties. But for the sake of
+      //completeness we might want to do it.
+      return target[name];
+    },
+
     apply: function(target, thisArg, argumentsList) {
       // Change the proxy argument to its _src
       var numArgs = argumentsList.length;
       for (var i = 0;i < numArgs;i++) {
         if (Object.toType(argumentsList[i]) === "object" &&
-            din.util.isOrHasProxy(argumentsList[i]))
+            din.util.isProxy(argumentsList[i]))
           argumentsList[i] = argumentsList[i]._src;
       }
 

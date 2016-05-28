@@ -30,12 +30,14 @@ test('setTimeout', function () {
 
 test('frames', function () {
   var thisFrame = window.frames;
-  assert.isFalse(din.util.isOrHasProxy(thisFrame));
+  assert.isFalse(din.util.isProxy(thisFrame));
+  assert.isFalse(din.util.hasProxy(thisFrame));
 });
 
 test('self', function () {
   var selfWindow = window.self;
-  assert.isFalse(din.util.isOrHasProxy(selfWindow));
+  assert.isFalse(din.util.isProxy(selfWindow));
+  assert.isFalse(din.util.hasProxy(selfWindow));
 });
 
 </script>

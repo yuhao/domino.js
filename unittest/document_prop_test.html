@@ -81,29 +81,6 @@ test('getPropThatIsNull', function () {
   assert.equal(nonsense, null);
 });
 
-test('overwriteFunc', function () {
-  document.__proto__.__proto__.testProp1 = function() {return 1+4;}
-
-  din.instrument.instrumentOneDocumentProp("testProp1");
-
-  document._testProp1 = document.testProp1;
-
-  assert.isTrue(din.util.isOrHasProxy(document._testProp1));
-  assert.isTrue(din.util.isOrHasProxy(document.testProp1));
-
-  document.testProp1 = function () {return 5+6;}
-  assert.isFalse(din.util.isOrHasProxy(document.__proto__.__proto__.testProp1));
-  assert.isTrue(din.util.isOrHasProxy(document.testProp1));
-  assert.isTrue(din.util.isOrHasProxy(document.__proto__.__proto__.testProp1));
-
-  assert.equal(document._testProp1.call(document._testProp1), 5);
-  assert.equal(document.testProp1.call(document.testProp1), 11);
-
-  delete document.__proto__.__proto__.testProp1;
-  delete document.testProp1;
-  delete document._testProp1;
-});
-
 test('deleteDocumentPrototypeProp', function () {
   document.__proto__.__proto__.testProp1 = function() {return 1+4;}
   din.instrument.instrumentOneDocumentProp("testProp1");
