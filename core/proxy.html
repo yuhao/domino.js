@@ -97,9 +97,10 @@ din.exportTo("proxy", function(){
         return true;
       }
 
-      //TODO: typically you wouldn't define a property in a function object so
-      //we do not further proxy function object properties. But for the sake of
-      //completeness we might want to do it.
+      // TODO: typically you wouldn't define a property in a function object so
+      // we do not further proxy function object properties. But for the sake of
+      // completeness we might want to do it.
+      // https://github.com/yuhao/domino.js/issues/38
       return target[name];
     },
 
