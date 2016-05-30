@@ -25,9 +25,11 @@ test('callbackEntryAndcallbackExit', function () {
   var evt = document.createEvent('CustomEvent');
   evt.initCustomEvent('testevent', true, true, {});
    
-  el.addEventListener('testevent', function bar(currentEvent) {
+  function bar(currentEvent) {
     value = -1;
-  }, false);
+  }
+
+  el.addEventListener('testevent', bar, false);
   el.dispatchEvent(evt);
   assert.equal(value, -1);
 
@@ -42,6 +44,8 @@ test('callbackEntryAndcallbackExit', function () {
   }
   el.dispatchEvent(evt);
   assert.equal(value, 2);
+
+  el.removeEventListener('testevent', bar);
 });
 </script>
 

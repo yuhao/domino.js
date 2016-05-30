@@ -4,6 +4,12 @@
 
 din.exportTo("instrument", function(){
   function genEventCallback(callback) {
+    // If |callback| is undefined or null, do not create a wrapper callback!
+    // But this also means that if a webpage does register an undefined
+    // callback, we won't be able to instrument it -- good/bad?
+    if (callback === undefined || callback === null)
+      return callback;
+
     return function() {
       // |callback| implements the EventListener interface whose arguments[0]
       // will be a vanilla Event object that dispatchEvent passes in. We take
@@ -31,7 +37,8 @@ din.exportTo("instrument", function(){
       // implements the EventListener interface.
       var originalCallback = arguments[1];
       var actualCallback = genEventCallback(originalCallback);
-      originalCallback._actualCb = actualCallback;
+      if (originalCallback)
+        originalCallback._actualCb = actualCallback;
       arguments[1] = actualCallback;
       _addEventListener.apply(this, arguments);
     }
@@ -46,7 +53,7 @@ din.exportTo("instrument", function(){
     var _removeEventListener = EventTarget.prototype.removeEventListener;
     EventTarget.prototype.removeEventListener = function removeEventListener() {
       var callback = arguments[1];
-      if (callback.hasOwnProperty("_actualCb"))
+      if (callback && callback.hasOwnProperty("_actualCb"))
         arguments[1] = callback._actualCb;
       _removeEventListener.apply(this, arguments);
     }

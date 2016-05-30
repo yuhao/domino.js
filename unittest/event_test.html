@@ -6,22 +6,51 @@ test('addEventListener', function () {
 
   var el = document.getElementById("test");
   var evt = document.createEvent('CustomEvent');
-  evt.initCustomEvent('testevent', true, true, {});
-   
-  el.addEventListener('testevent', function bar(currentEvent) {
+  evt.initCustomEvent('testevent', false, true, {});
+
+  function bar(currentEvent) {
     var evt2 = document.createEvent('CustomEvent');
-    evt2.initCustomEvent('testevent2', true, true, {});
-    currentEvent.target.addEventListener('testevent2', function(){
+    evt2.initCustomEvent('testevent2', false, true, {});
+
+    function nestedBar(){
       value++;
-    });
+    }
+    currentEvent.target.addEventListener('testevent2', nestedBar);
 
     currentEvent.target.dispatchEvent(evt2);
+    currentEvent.target.removeEventListener('testevent2', nestedBar);
     value++;
-  }, false);
+  }
 
+  el.addEventListener('testevent', bar, false);
   el.dispatchEvent(evt);
+  el.removeEventListener('testevent', bar);
 
   assert.equal(value, 2);
+});
+
+test('addEventListenerWithUndefinedCallback', function () {
+  var el = document.getElementById("test");
+  var evt = document.createEvent('CustomEvent');
+  evt.initCustomEvent('testevent', false, true, {});
+  var foo;
+  var value = 0;
+
+  // At this point |foo| is undefined.
+  el.addEventListener('testevent', foo);
+  // Nothing should happen.
+  el.dispatchEvent(evt);
+  assert.equal(value, 0);
+  el.removeEventListener("testevent", foo);
+
+  foo = function() {
+    value = 1;
+  }
+  // Now |foo| is defined.
+  el.addEventListener('testevent', foo);
+  el.dispatchEvent(evt);
+  assert.equal(value, 1);
+  el.removeEventListener("testevent", foo);
 });
 
 test('removeEventListener', function () {
@@ -91,12 +120,15 @@ test('registerEventCb', function () {
 
   var el = document.getElementById("test");
   var evt = document.createEvent('CustomEvent');
-  evt.initCustomEvent('testevent', true, true, {});
+  evt.initCustomEvent('testevent', false, true, {});
 
-  el.addEventListener('testevent', function bar(currentEvent) {
-  }, false);
+  function bar(currentEvent) {
+  }
+
+  el.addEventListener('testevent', bar, false);
 
   el.dispatchEvent(evt);
+  el.removeEventListener('testevent', bar);
 
   assert.equal(value, 1);
 });
